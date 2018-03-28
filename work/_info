@@ -1,0 +1,278 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor
+Eadd4
+Z1 w1522257832
+Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+Z5 8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/add4.vhd
+Z6 FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/add4.vhd
+l0
+L5
+V@BjVMWzB^M9I;>KgVVkoA3
+!s100 @lfBLOh5Ab5Z2:dBIRP9T2
+Z7 OP;C;10.4a;61
+32
+Z8 !s110 1522257851
+!i10b 1
+Z9 !s108 1522257851.000000
+Z10 !s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/add4.vhd|
+Z11 !s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/add4.vhd|
+!i113 1
+Z12 o-work work -O0
+Z13 tExplicit 1
+Aadd4_arch
+R2
+R3
+R4
+DEx4 work 4 add4 0 22 @BjVMWzB^M9I;>KgVVkoA3
+l11
+L10
+V`D09IP_`JjdoE7O80Pfef1
+!s100 oD[cj?cHHYX2KD=oD3@P;2
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
+Ealu
+w1521986078
+R2
+Z14 DPx4 ieee 16 std_logic_signed 0 22 C<aanc0R`<LWPSe[JYRP^3
+Z15 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+R3
+R4
+R0
+8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/ALU.vhd
+FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/ALU.vhd
+l0
+L7
+VOfeF0<nDNBiek?GRG0FZh0
+!s100 _431K`1aR8lz?^keO8d3J0
+R7
+32
+!s110 1522007771
+!i10b 1
+!s108 1522007771.000000
+!s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/ALU.vhd|
+!s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/ALU.vhd|
+!i113 1
+R12
+R13
+Eex
+Z16 w1522007413
+R2
+R14
+R15
+R3
+R4
+R0
+Z17 8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/EX.vhd
+Z18 FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/EX.vhd
+l0
+L7
+ViNZ=2J2<DCm^K`_d4SVz;2
+!s100 J6eGMQ62;Q_7^:m=D;bi`0
+R7
+32
+Z19 !s110 1522007758
+!i10b 1
+Z20 !s108 1522007758.000000
+Z21 !s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/EX.vhd|
+Z22 !s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/EX.vhd|
+!i113 1
+R12
+R13
+Aex_arch
+R2
+R14
+R15
+R3
+R4
+DEx4 work 2 ex 0 22 iNZ=2J2<DCm^K`_d4SVz;2
+l45
+L23
+VTUb;VUPB;c0hD51iz?ojV3
+!s100 >Ag20`5z[>ZNM>lP1aY?X3
+R7
+32
+R19
+!i10b 1
+R20
+R21
+R22
+!i113 1
+R12
+R13
+Ehazard_detection
+Z23 w1522010239
+R2
+R3
+R4
+R0
+Z24 8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/hazard_detection.vhd
+Z25 FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/hazard_detection.vhd
+l0
+L5
+V]?[z4LSfSo88LF<^0;d8I0
+!s100 __@caniXRoH_^^fVC@KFn1
+R7
+32
+Z26 !s110 1522010244
+!i10b 1
+Z27 !s108 1522010244.000000
+Z28 !s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/hazard_detection.vhd|
+Z29 !s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/hazard_detection.vhd|
+!i113 1
+R12
+R13
+Ahazard_detection_arch
+R2
+R3
+R4
+DEx4 work 16 hazard_detection 0 22 ]?[z4LSfSo88LF<^0;d8I0
+l14
+L13
+V<OSi]gjgRR6CRMLO]ABi:0
+!s100 DGXg1A`lRLzZL_Y<eko=Q2
+R7
+32
+R26
+!i10b 1
+R27
+R28
+R29
+!i113 1
+R12
+R13
+Eifid_buffer
+Z30 w1522261279
+R3
+R4
+R0
+Z31 8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/IFID_buffer.vhd
+Z32 FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/IFID_buffer.vhd
+l0
+L4
+V0J=ij;nJ?8YKD<GKDe^bI3
+!s100 oi0oX^]iTn[]N`VZ6A2B`3
+R7
+32
+Z33 !s110 1522261286
+!i10b 1
+Z34 !s108 1522261286.000000
+Z35 !s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/IFID_buffer.vhd|
+Z36 !s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/IFID_buffer.vhd|
+!i113 1
+R12
+R13
+Aifid_buffer_arch
+R3
+R4
+DEx4 work 11 ifid_buffer 0 22 0J=ij;nJ?8YKD<GKDe^bI3
+l17
+L15
+V^F<lb:Mc0<2j^]I9Il3of1
+!s100 LQV<:ffR@I@io;D:693W?0
+R7
+32
+R33
+!i10b 1
+R34
+R35
+R36
+!i113 1
+R12
+R13
+Emux
+Z37 w1522007725
+R3
+R4
+R0
+Z38 8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/mux.vhd
+Z39 FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/mux.vhd
+l0
+L4
+VjS][T2m2d@VH<mcnKXJlB3
+!s100 d_h9P1`H[bhHKlXUE`6La0
+R7
+32
+Z40 !s110 1522007731
+!i10b 1
+Z41 !s108 1522007731.000000
+Z42 !s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/mux.vhd|
+Z43 !s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/mux.vhd|
+!i113 1
+R12
+R13
+Amux_arch
+R3
+R4
+DEx4 work 3 mux 0 22 jS][T2m2d@VH<mcnKXJlB3
+l12
+L11
+VURdeBiJ`cDPjHGGC0iNh<1
+!s100 071@V54@aVDhhXYo9mF7c0
+R7
+32
+R40
+!i10b 1
+R41
+R42
+R43
+!i113 1
+R12
+R13
+Epc
+Z44 w1522258970
+R3
+R4
+R0
+Z45 8C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/PC.vhd
+Z46 FC:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/PC.vhd
+l0
+L4
+V7nVM<zM@z[_lKPR[23Lo53
+!s100 V>T^j<52eHkZE;1Z1he5g2
+R7
+32
+Z47 !s110 1522258980
+!i10b 1
+Z48 !s108 1522258980.000000
+Z49 !s90 -reportprogress|300|-work|work|C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/PC.vhd|
+Z50 !s107 C:/Users/fbine/Documents/School/W18/ECSE 425/P4_pipeline_processor/PC.vhd|
+!i113 1
+R12
+R13
+Apc_arch
+R3
+R4
+DEx4 work 2 pc 0 22 7nVM<zM@z[_lKPR[23Lo53
+l13
+L12
+V]DEPH=ezI?A^C:H2cP7iF0
+!s100 9L=Y3HEeOWz;WIYZIYc[P2
+R7
+32
+R47
+!i10b 1
+R48
+R49
+R50
+!i113 1
+R12
+R13
