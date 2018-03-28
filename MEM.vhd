@@ -1,0 +1,38 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_SIGNED.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+ENTITY MEM IS
+-- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
+  PORT( clock : IN STD_LOGIC;
+        AluData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        WriteDataMem : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        Temp : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        mem_en : IN STD_LOGIC;
+        MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        Temp_Out : OUT STD_LOGIC;
+        SEL2 : IN STD_LOGIC_VECTOR(31 DOWNTO 0));
+END MEM;
+
+ARCHITECTURE MEM_arch OF MEM IS
+
+COMPONENT memory IS
+  PORT( clock: IN STD_LOGIC;
+    writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
+    address: IN INTEGER RANGE 0 TO ram_size-1;
+    memwrite: IN STD_LOGIC;
+    memread: IN STD_LOGIC;
+    readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
+    waitrequest: OUT STD_LOGIC);
+END COMPONENT;
+
+SIGNAL AluDataSignal : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL TempSignal : STD_LOGIC_VECTOR(31 DOWNTO 0);
+
+BEGIN
+mem1: mux port map(clock,WriteDataMem,AluData,mem_en,NULL,MemoryData, NULL);
+
+END MEM_arch;
