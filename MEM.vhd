@@ -1,10 +1,11 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.STD_LOGIC_ARITH.ALL;
-USE IEEE.STD_LOGIC_SIGNED.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY MEM IS
+generic(
+	ram_size : INTEGER := 32768
+);
 -- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
   PORT( clock : IN STD_LOGIC;
         AluData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -30,9 +31,16 @@ COMPONENT memory IS
 END COMPONENT;
 
 SIGNAL AluDataSignal : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL memAddress : INTEGER;
 SIGNAL TempSignal : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL emptySignal : STD_LOGIC := '0';
 
 BEGIN
-mem1: mux port map(clock,WriteDataMem,AluData,mem_en,NULL,MemoryData, NULL);
+mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,emptySignal,MemoryData, OPEN);
+
+  PROCESS (AluData)
+    BEGIN
+	memAddress <= to_integer(unsigned(AluData));
+  END PROCESS;
 
 END MEM_arch;
