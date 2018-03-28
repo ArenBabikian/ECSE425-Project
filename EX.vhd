@@ -15,7 +15,7 @@ ENTITY EX IS
         SEL2 : IN STD_LOGIC;
         ALUCtr1 : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
         ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-        Branch_Taken :  OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        Branch_Taken :  OUT STD_LOGIC;
         THREE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
         FIVE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 END EX;
@@ -47,7 +47,7 @@ mux1: mux port map(SEL1,ONE,TWO,X1);
 mux2: mux port map(SEL2,THREE,FOUR,X2);
 ALU1: ALU port map(X1,X2,ALUCtr1,ZEROALU,ALU_OUT);
 
-Branch_Taken <= TWO WHEN (ZEROALU = '1');
+Branch_Taken <= '1' WHEN (ZEROALU = '1') ELSE '0';
 THREE_OUT <= THREE;
 FIVE_OUT <= FIVE;
 

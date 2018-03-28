@@ -12,7 +12,7 @@ END pc;
 ARCHITECTURE pc_arch OF pc is
 BEGIN
 
-pc_proc : PROCESS(clock,reset,pc_in)
+pc_proc : PROCESS(clock,reset)
 BEGIN
   IF reset = '1' THEN
     pc_out <= (OTHERS => '0');
