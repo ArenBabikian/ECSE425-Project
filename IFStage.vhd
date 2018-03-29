@@ -1,0 +1,68 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_ARITH.ALL;
+USE IEEE.STD_LOGIC_SIGNED.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+
+ENTITY IFStage IS
+-- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
+  PORT( 
+        SELMUX : IN STD_LOGIC;
+	MUXIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+
+
+        ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        Branch_Taken :  OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        THREE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        FIVE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
+END IFStage;
+
+ARCHITECTURE IF_arch OF IFStage IS
+
+COMPONENT mux is
+  PORT( SEL : IN STD_LOGIC;
+        A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        B   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        x   : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
+	);
+END COMPONENT;
+
+COMPONENT add4 is
+  PORT(
+	A : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	X : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
+	);
+END COMPONENT;
+
+COMPONENT PC is
+  PORT(
+	pc_in : IN STD_LOGIC_VECTOR(32 DOWNTO 0);
+	enable : IN STD_LOGIC;
+	clock : IN STD_LOGIC;
+	reset : IN STD_LOGIC;
+	pc_out : OUT STD_LOGIC_VECTOR(32 DOWNTO 0));
+	);
+END COMPONENT;
+
+SIGNAL X1 : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL ZEROALU : STD_LOGIC;
+
+--File R/W
+FILE file_input : text;
+FILE file_output : text;
+CONSTANT command_size : natural := 32;
+SIGNAL input_command : std_logic_vector (command_size-1 downto 0);
+SIGNAL output_command : std_logic_vector(command_size-1 downto 0);
+
+BEGIN
+mux1: mux port map(SEL1,ONE,TWO,X1);
+mux2: mux port map(SEL2,THREE,FOUR,X2);
+ALU1: ALU port map(X1,X2,ALUCtr1,ZEROALU,ALU_OUT);
+
+Branch_Taken <= TWO WHEN (ZEROALU = '1');
+THREE_OUT <= THREE;
+FIVE_OUT <= FIVE;
+
+
+END IF_arch;
