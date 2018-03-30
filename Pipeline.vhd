@@ -5,125 +5,144 @@ use ieee.numeric_std.all;
 entity pipeline is
 port (
 	clk : in std_logic;
-	reset : in std_logic;
+	reset : in std_logic
   );
 end pipeline;
 
 architecture behavioral of pipeline is
-	--for printing purposes
-	FILE file_output : text;
 
 	--BUFFER COMPONENTS
 	Component IFID_buffer is
-		PORT( 
-			clock : IN STD_LOGIC;
-			pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			stall_request : IN STD_LOGIC;
-			IR : IN STD_LOGIC_VECTOR(0 TO 31);
-			
-			pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		);
+		PORT( clock : IN STD_LOGIC;
+		      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      stall_request : IN STD_LOGIC;
+		      IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 	END component;
 
 	Component IDEX_buffer is
-		PORT( 
-
-		);
+		PORT(	clock : IN STD_LOGIC;
+		      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rs_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rt_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      extendData_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      IR_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      SEL1_in : IN STD_LOGIC;
+		      SEL2_in : IN STD_LOGIC;
+		      ALUCtr_in : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+		      WriteToReg_in : IN STD_LOGIC;
+		      WriteToMem_in : IN STD_LOGIC;
+		      BranchCtrl_in : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rs_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rt_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      extendData_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      SEL1_out : OUT STD_LOGIC;
+		      SEL2_out : OUT STD_LOGIC;
+		      ALUCtr_out : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+		      WriteToReg_out : OUT STD_LOGIC;
+		      WriteToMem_out : OUT STD_LOGIC;
+		      BranchCtrl_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
 	END component;
 
 	Component EXMEM_buffer is
-		PORT( 
-			clock : IN STD_LOGIC;
-			Branch_Taken_in : IN STD_LOGIC;
-			ALU_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			THREE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FIVE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		   
-			Branch_Taken_out : OUT STD_LOGIC;
-			ALU_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			THREE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FIVE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
-		);
+		PORT ( clock : IN STD_LOGIC;
+		       Branch_Taken_in : IN STD_LOGIC;
+		       ALU_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		       rt_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		       IR_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		       WriteToRegInEXMEM : IN STD_LOGIC;
+		       WriteToMemInEXMEM : IN STD_LOGIC;
+		       WriteToRegOutEXMEM : OUT STD_LOGIC;
+		       WriteToMemOutEXMEM : OUT STD_LOGIC;
+		       Branch_Taken_out : OUT STD_LOGIC;
+		       ALU_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		       rt_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		       IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 	END component;
 
 	Component MEMWB_buffer is
-		PORT( 
-			clock : IN STD_LOGIC;
-			memdata_in : IN std_logic_vector (31 downto 0);
-			aludata_in : IN std_logic_vector (31 downto 0);
-			temp_in : IN std_logic_vector (31 downto 0);
-			
-			memdata_out : out std_logic_vector (31 downto 0);
-			aludata_out : out std_logic_vector (31 downto 0);
-			temp_out : out std_logic_vector (31 downto 0)
-		);
+		PORT( clock : IN STD_LOGIC;
+					memdata_in : IN std_logic_vector (31 downto 0);
+					aludata_in : IN std_logic_vector (31 downto 0);
+					temp_in : IN std_logic_vector (31 downto 0);
+					WriteToReg_in : IN std_logic;
+					memdata_out : out std_logic_vector (31 downto 0);
+					aludata_out : out std_logic_vector (31 downto 0);
+					temp_out : out std_logic_vector (31 downto 0);
+					WriteToReg_out : OUT std_logic);
 	END component;
-	
+
 	--STAGE COMPONENTS
 	Component IFStage is
-		PORT( 
-			SELMUX : IN STD_LOGIC;
-			MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			PCEnable : IN STD_logic;
-			PCClk : IN STD_Logic;
-			PCRESET : IN STD_Logic;
-			
-		    NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
-		);
+		PORT( SELMUX : IN STD_LOGIC;
+	      	MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	      	PCEnable : IN STD_logic;
+	      	PCClk : IN STD_Logic;
+	      	PCRESET : IN STD_Logic;
+	        NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0));
 	END component;
 
 	Component ID is
-		PORT( 
-
-		);
+		PORT( clock : IN STD_LOGIC;
+		      reset : IN STD_LOGIC;
+		      IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      MEMWB_IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rd : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+		      reg_en : IN STD_LOGIC;
+		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rs_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rt_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      extendData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      SEL1 : OUT STD_LOGIC;
+		      SEL2 : OUT STD_LOGIC;
+		      ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
+		      WriteToReg : OUT STD_LOGIC;
+		      WriteToMem : OUT STD_LOGIC;
+		      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
 	END component;
 
 	Component EX is
-		PORT( 
-			ONE : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			TWO : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			THREE : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FOUR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FIVE : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			SEL1 : IN STD_LOGIC;
-			SEL2 : IN STD_LOGIC;
-			ALUCtr1 : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-			ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			Branch_Taken :  OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			THREE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FIVE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
-		);
+		PORT( pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        rs_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        rt_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        extendData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        SEL1 : IN STD_LOGIC;
+	        SEL2 : IN STD_LOGIC;
+	        ALUCtr1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+	        BranchCtrl1: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+	        ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        Branch_Taken :  OUT STD_LOGIC;
+	        rt_data_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        IR_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 	End Component;
 
 	Component MEM is
-		PORT( 
-			clock : IN STD_LOGIC;
-			AluData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			WriteDataMem : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			Temp : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			mem_en : IN STD_LOGIC;
-			SEL2 : IN STD_LOGIC_VECTOR(31 DOWNTO 0)
-			
-			MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			Temp_Out : OUT STD_LOGIC;
-		);
+		PORT( clock : IN STD_LOGIC;
+					AluData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+					WriteDataMem : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+					Temp : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+					mem_en : IN STD_LOGIC;
+					MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+					AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+					Temp_Out : OUT STD_LOGIC_VECTOR(31 downto 0));
 	END component;
 
 	Component WB is
-		PORT( 
-			mux_sel : IN std_logic;
-			mem_in : IN std_logic_vector (31 downto 0);
-			alu_in  : IN std_logic_vector (31 downto 0);
-			temp_in : IN std_logic_vector (31 downto 0);
-			
-			mux_out : out std_logic_vector (31 downto 0);
-			temp_out : out std_logic_vector (31 downto 0)
-		);
+		PORT( mux_sel : IN std_logic;
+					mem_in : IN std_logic_vector (31 downto 0);
+					alu_in  : IN std_logic_vector (31 downto 0);
+					temp_in : IN std_logic_vector (31 downto 0);
+					mux_out : out std_logic_vector (31 downto 0);
+					temp_out : out std_logic_vector (31 downto 0));
 	END component;
-	
+
 	--Hazard Detection
 	component hazard_detection is
 		PORT(
@@ -133,13 +152,11 @@ architecture behavioral of pipeline is
 			STALL_REQUEST : OUT STD_LOGIC)
 		);
 	end component;
-	
-
 
 -- test signals
 	SIGNAL reset : std_logic := '0';
 	SIGNAL clk : std_logic := '0';
-	CONSTANT clk_period : TIME := 2 ns;
+	CONSTANT clk_period : TIME := 1 ns;
 
 	SIGNAL s_addr : std_logic_vector (31 DOWNTO 0);
 	SIGNAL s_read : std_logic;
@@ -155,87 +172,44 @@ architecture behavioral of pipeline is
 	SIGNAL m_writedata : std_logic_vector (7 DOWNTO 0);
 	SIGNAL m_waitrequest : std_logic;
 
-
-
-
-
---Temporary variables
---signal index : std_logic_vector(5 downto 0) := "00001";
-
---hazard detection	
-signal hazdet_stallreq : std_logic;
-signal hazdet_ifid_rs, hazdet_ifid_rt, hazdet_idex_reg : (4 downto 0);
-
---if stage
-signal if_next_pc, if_instr_val : std_logic_vector(31 downto 0);
---ifid buffer
-signal ifid_pc_out, ifid_ir_out :std_logic_vector(31 downto 0);
---id stage
-
---idex buffer
-
---ex stage
-signal ex_alu_out, ex_three_out, ex_five_out : std_logic_vector (31 downto 0);
-signal ex_br_taken : std_logic;
---exmem buffer
-signal exmem_branch_taken : std_logic;
-signal exmem_alu_out, exmem_three_out, exmem_five_out : std_logic_vector(31 downto 0);
---mem stage
-signal mem_data_out, mem_alu_out, mem_tmp_out : std_logic_vector(31 downto 0);
---memwb buffer
-signal  memwb_data_out, memwb_alu_out, memwb_tmp_out : std_logic_vector(31 downto 0);
---wb stage
-signal wb_mux_out, wb_temp_out : std_logic_vector(31 downto 0);
-
-begin
-
-process (clk)
-begin
---pre-processing
-hazdet_ifid_rs <= if_instr_val (10 downto 6);
-hazdet_ifid_rt <= if_instr_val (15 downto 11);
-hazdet_idex_reg <= 
-
+-- signals connect the stages and buffers
+-- IF/ID buffer
+SIGNAL ifid_ir_out, ifid_pc_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+-- ID stage
+SIGNAL if_ir_out , if_pc_out , if_rs_data , if_rt_data , if_extend_data : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL if_ALU_ctrl : STD_LOGIC_VECTOR(4 DOWNTO 0);
+SIGNAL if_branch_ctrl : STD_LOGIC_VECTOR(1 DOWNTO 0);
+SIGNAL if_sel1 , if_sel2 , if_write_to_reg , if_write_to_mem : STD_LOGIC;
+-- ID/EX buffer
+SIGNAL idex_pc_out , idex_rs_data_out , idex_rt_data_out , idex_extendData_out , idex_IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL idex_SEL1_out , idex_SEL2_out , idex_WriteToReg_out, idex_WriteToMem_out: OUT STD_LOGIC;
+SIGNAL idex_ALUCtr_out : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL idex_BranchCtrl_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
+-- EX stage
+SIGNAL ex_ALU_OUT , ex_rt_data_OUT , ex_IR_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL ex_Branch_Taken :  OUT STD_LOGIC;
+-- EX/MEM buffer
+SIGNAL exmem_WriteToRegOutEXMEM , exmem_WriteToMemOutEXMEM , exmem_Branch_Taken_out : OUT STD_LOGIC;
+SIGNAL exmem_ALU_out , rt_data_out , IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+-- MEM stage
+SIGNAL mem_MemoryData , mem_AluDataOut , mem_IR_Out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+-- MEM/WB buffer
+SIGNAL memwb_ir_out , memwb_memdata_out , memwb_aludata_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL memwb_write_to_reg : STD_LOGIC;
+-- WB
+SIGNAL wb_mux_out : out std_logic_vector (31 downto 0);
 --port maps
-IFstg : IFStage port map (exmem_branch_taken,exmem_alu_out,not hazdet_stallreq,clk,reset,if_next_pc,if_instr_val);
-IFIDbuf : IFID_Buffer port map (clk,if_next_pc,hazdet_stallreq,if_instr_val,ifid_pc_out,ifid_ir_out);
-IDstg : ID port map ( );
-IDEXbuf : IDEX_buffer port map ( );
-EXstg : EX port map (,,,,,,,,ex_alu_out,ex_br_taken,ex_three_out,ex_five_out);
-EXMEMbuf : EXMEM_buffer port map (clk,ex_br_taken,ex_alu_out,ex_three_out,ex_five_out,exmem_branch_taken,exmem_alu_out,exmem_three_out,exmem_five_out);
-MEMstg : MEM port map (clk,exmem_alu_out,exmem_three_out,exmem_five_out,,,mem_data_out,mem_alu_out,mem_tmp_out);
-MEMWBbuf : MEMWB_buffer port map (clk,mem_data_out,mem_alu_out,mem_tmp_out,memwb_data_out,memwb_alu_out,memwb_tmp_out);
-WBstg : WB port map (,memwb_data_out,memwb_alu_out,memwb_tmp_out,wb_mux_out, wb_temp_out);
+IFstg : IFStage port map (exmem_Branch_Taken_out,,,,,,);
+IFIDbuf : IFID_Buffer port map (,,,,ifid_pc_out,ifid_ir_out);
+IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,memwb_ir_out,,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl);
+IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,idex_BranchCtrl_out);
+EXstg : EX port map (idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_BranchCtrl_out,ex_ALU_OUT,ex_Branch_Taken,ex_rt_data_OUT,ex_IR_OUT);
+EXMEMbuf : EXMEM_buffer port map (clk,ex_Branch_Taken,ex_ALU_OUT,ex_rt_data_OUT,ex_IR_OUT,idex_WriteToReg_out,idex_WriteToMem_out,exmem_WriteToRegOutEXMEM,exmem_WriteToMemOutEXMEM,exmem_Branch_Taken_out,exmem_ALU_out,rt_data_out,IR_out);
+MEMstg : MEM port map (clk,exmem_ALU_out,rt_data_out,IR_out,exmem_WriteToMemOutEXMEM,mem_MemoryData,mem_AluDataOut,mem_IR_Out);
+MEMWBbuf : MEMWB_buffer port map (clk,mem_MemoryData,mem_AluDataOut, mem_IR_Out,exmem_WriteToRegOutEXMEM,memwb_memdata_out,memwb_aludata_out,memwb_ir_out,memwb_write_to_reg);
+WBstg : WB port map (,memwb_memdata_out,memwb_aludata_out,wb_mux_out);
 
 hazDet : hazard_detection port map (,hazdet_ifid_rs,hazdet_ifid_rt,hazdet_stallreq);
 
---Pipeline
-
-end process;
-
-printing : process (clk)
-	VARIABLE output_line : line;
-    VARIABLE output_cmd : std_logic_vector(31 downto 0);
-	variable ind : integer := 0;
-
-    BEGIN
-	while ind < 10000 loop
-		ind := ind + 1;
-	end loop;
-	
-	file_open(file_output, "register_file.txt", write_mode);
-	
-	
-	
-	while not endfile(file_input) and cur_line <= trgt_line loop
-    		readline(file_input, input_line);
-		if cur_line = trgt_line then
-			read(input_line, input_cmd);
-			instrCode <= input_cmd;
-		end if;
-		cur_line := cur_line +1;
-	end loop;
-	file_close(file_input);
-end process;
 
 end behavioral;

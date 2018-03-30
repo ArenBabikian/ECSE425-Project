@@ -5,17 +5,13 @@ USE IEEE.STD_LOGIC_SIGNED.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY IFStage IS
--- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
-  PORT(
-        SELMUX : IN STD_LOGIC;
-	MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-	PCEnable : IN STD_logic;
-	PCClk : IN STD_Logic;
-	PCRESET : IN STD_Logic;
-
+  PORT( SELMUX : IN STD_LOGIC;
+      	MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      	PCEnable : IN STD_logic;
+      	PCClk : IN STD_Logic;
+      	PCRESET : IN STD_Logic;
         NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-	InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0));
-
+	      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0));
 END IFStage;
 
 ARCHITECTURE IF_arch OF IFStage IS

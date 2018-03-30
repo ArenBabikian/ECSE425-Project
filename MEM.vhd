@@ -6,18 +6,14 @@ ENTITY MEM IS
 generic(
 	ram_size : INTEGER := 32768
 );
--- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
-  PORT(
-		clock : IN STD_LOGIC;
-		AluData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		WriteDataMem : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		Temp : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		mem_en : IN STD_LOGIC;
-		MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		Temp_Out : OUT STD_LOGIC_VECTOR(31 downto 0)
-		);
-
+  PORT( clock : IN STD_LOGIC;
+				AluData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+				WriteDataMem : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+				IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+				mem_en : IN STD_LOGIC;
+				MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+				AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+				IR_Out : OUT STD_LOGIC_VECTOR(31 downto 0));
 END MEM;
 
 ARCHITECTURE MEM_arch OF MEM IS
@@ -43,7 +39,7 @@ mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,emptySignal,MemoryDat
   PROCESS (AluData)
     BEGIN
 	memAddress <= to_integer(unsigned(AluData));
-	Temp_Out <= Temp;
+	IR_Out <= IR;
   END PROCESS;
 
 END MEM_arch;
