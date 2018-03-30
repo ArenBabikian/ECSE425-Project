@@ -10,7 +10,7 @@ ENTITY EX IS
         IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         SEL1 : IN STD_LOGIC;
         SEL2 : IN STD_LOGIC;
-        ALUCtr1 : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        ALUCtr1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
         BranchCtrl1: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
         ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
         Branch_Taken :  OUT STD_LOGIC;
@@ -31,7 +31,7 @@ COMPONENT ALU is
   PORT(
     Data1: in STD_LOGIC_VECTOR (31 downto 0);
     Data2: in STD_LOGIC_VECTOR (31 downto 0);
-    ALUCtr : in  STD_LOGIC_VECTOR (3 downto 0);
+    ALUCtr : in  STD_LOGIC_VECTOR (4 downto 0);
     Zero : out STD_LOGIC;
     ALU_Result : out STD_LOGIC_VECTOR (31 downto 0));
 END COMPONENT;
