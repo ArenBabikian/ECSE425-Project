@@ -1,6 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+-- Instruction Decode stage
 ENTITY ID IS
 PORT( clock : IN STD_LOGIC;
       reset : IN STD_LOGIC;
@@ -63,10 +63,11 @@ data <= IR(15 DOWNTO 0);
 rs <= IR(25 DOWNTO 21);
 rt <= IR(20 DOWNTO 16);
 rd <= memwb_ir(15 DOWNTO 11);
+-- Port map of the components
 registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,rs_data,rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl);
 extimm1 : ExtImm port map(data,extCtrl,extendData);
-
+-- Propagating signals through the pipeline
 IR_out <= IR;
 pc_out <= pc_in;
 

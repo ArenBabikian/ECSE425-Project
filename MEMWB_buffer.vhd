@@ -1,6 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+-- Buffer between memory stage and write back stage
 ENTITY MEMWB_buffer IS
 PORT( clock : IN STD_LOGIC;
 			memdata_in : IN std_logic_vector (31 downto 0);

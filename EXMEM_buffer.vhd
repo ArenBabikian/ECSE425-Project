@@ -1,6 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+-- Buffer between execute stage and memory stage
 ENTITY EXMEM_buffer IS
 PORT ( clock : IN STD_LOGIC;
        Branch_Taken_in : IN STD_LOGIC;
@@ -21,6 +21,7 @@ ARCHITECTURE EXMEM_buffer_arch OF EXMEM_buffer IS
 BEGIN
 PROCESS(clock)
 BEGIN
+  -- Propagating signals through the pipeline
   IF(clock'EVENT AND clock = '1') THEN
     Branch_Taken_out <= Branch_Taken_in;
     rt_data_out <= rt_data_in;

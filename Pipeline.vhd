@@ -1,7 +1,7 @@
 library ieee;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
-
+-- Main pipeline processor module
 entity pipeline is
 port (
 	clk : in std_logic;
@@ -155,7 +155,7 @@ architecture behavioral of pipeline is
 	        STALL_REQUEST : OUT STD_LOGIC);
 	end component;
 
--- signals connect the stages and buffers
+-- Signals connecting the stages and buffers together
 -- IF stage
 SIGNAL if_NEXT_PC , if_InstructionValue : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL pc_en : STD_LOGIC;

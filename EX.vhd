@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-
+-- Execute Stage
 ENTITY EX IS
   PORT( pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         rs_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -50,11 +50,12 @@ SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL ZEROALU : STD_LOGIC;
 
 BEGIN
+-- Port map of components
 mux1: mux port map(SEL1,pc_in,rs_data,X1);
 mux2: mux port map(SEL2,rt_data,extendData,X2);
 ALU1: ALU port map(X1,X2,ALUCtr1,IR,ZEROALU,ALU_OUT);
-BranchZero1: BranchZero PORT MAP(rs_data,rt_data,BranchCtrl1,Branch_Taken);
-
+BranchZero1: BranchZero port map(rs_data,rt_data,BranchCtrl1,Branch_Taken);
+-- forwarding signals
 rt_data_OUT <= rt_data;
 IR_OUT <= IR;
 

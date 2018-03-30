@@ -1,6 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+-- 2 to 1 32 bits multiplexer module
 ENTITY mux IS
   PORT( SEL : IN STD_LOGIC;
         A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
