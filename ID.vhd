@@ -6,7 +6,7 @@ PORT( clock : IN STD_LOGIC;
       reset : IN STD_LOGIC;
       IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      wb_mux : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       reg_en : IN STD_LOGIC;
       IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -63,7 +63,7 @@ data <= IR(15 DOWNTO 0);
 rs <= IR(25 DOWNTO 21);
 rt <= IR(20 DOWNTO 16);
 rd <= memwb_ir(15 DOWNTO 11);
-registers1 : REGISTERS port map(clock,rs,rt,rd,data,reg_en,reset,rs_data,rt_data);
+registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,rs_data,rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl);
 extimm1 : ExtImm port map(data,extCtrl,extendData);
 
