@@ -14,13 +14,12 @@ END InstrMem;
 ARCHITECTURE behavioral OF InstrMem is
 
   FILE file_input : text;
-  CONSTANT command_size : natural := 32;
-  SIGNAL input_command : STD_LOGIC_VECTOR (command_size-1 downto 0);
+  SIGNAL input_command : STD_LOGIC_VECTOR (31 downto 0);
 
 BEGIN
   PROCESS
     VARIABLE input_line : line;
-    VARIABLE input_cmd : std_logic_vector(command_size-1 downto 0);
+    VARIABLE input_cmd : std_logic_vector(31 downto 0);
 	variable cur_line : integer:= 0;
 	variable trgt_line : integer;
 

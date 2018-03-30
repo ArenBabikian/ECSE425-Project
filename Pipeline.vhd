@@ -10,6 +10,8 @@ port (
 end pipeline;
 
 architecture behavioral of pipeline is
+	--for printing purposes
+	FILE file_output : text;
 
 	--BUFFER COMPONENTS
 	Component IFID_buffer is
@@ -162,6 +164,8 @@ architecture behavioral of pipeline is
 
 --hazard detection	
 signal hazdet_stallreq : std_logic;
+signal hazdet_ifid_rs, hazdet_ifid_rt, hazdet_idex_reg : (4 downto 0);
+
 --if stage
 signal if_next_pc, if_instr_val : std_logic_vector(31 downto 0);
 --ifid buffer
@@ -171,7 +175,8 @@ signal ifid_pc_out, ifid_ir_out :std_logic_vector(31 downto 0);
 --idex buffer
 
 --ex stage
-signal 
+signal ex_alu_out, ex_three_out, ex_five_out : std_logic_vector (31 downto 0);
+signal ex_br_taken : std_logic;
 --exmem buffer
 signal exmem_branch_taken : std_logic;
 signal exmem_alu_out, exmem_three_out, exmem_five_out : std_logic_vector(31 downto 0);
@@ -186,60 +191,51 @@ begin
 
 process (clk)
 begin
+--pre-processing
+hazdet_ifid_rs <= if_instr_val (10 downto 6);
+hazdet_ifid_rt <= if_instr_val (15 downto 11);
+hazdet_idex_reg <= 
 
 --port maps
 IFstg : IFStage port map (exmem_branch_taken,exmem_alu_out,not hazdet_stallreq,clk,reset,if_next_pc,if_instr_val);
 IFIDbuf : IFID_Buffer port map (clk,if_next_pc,hazdet_stallreq,if_instr_val,ifid_pc_out,ifid_ir_out);
 IDstg : ID port map ( );
 IDEXbuf : IDEX_buffer port map ( );
-EXstg : EX port map ( );
-EXMEMbuf : EXMEM_buffer port map (clk,,,,,exmem_branch_taken,exmem_alu_out,exmem_three_out,exmem_five_out);
+EXstg : EX port map (,,,,,,,,ex_alu_out,ex_br_taken,ex_three_out,ex_five_out);
+EXMEMbuf : EXMEM_buffer port map (clk,ex_br_taken,ex_alu_out,ex_three_out,ex_five_out,exmem_branch_taken,exmem_alu_out,exmem_three_out,exmem_five_out);
 MEMstg : MEM port map (clk,exmem_alu_out,exmem_three_out,exmem_five_out,,,mem_data_out,mem_alu_out,mem_tmp_out);
 MEMWBbuf : MEMWB_buffer port map (clk,mem_data_out,mem_alu_out,mem_tmp_out,memwb_data_out,memwb_alu_out,memwb_tmp_out);
 WBstg : WB port map (,memwb_data_out,memwb_alu_out,memwb_tmp_out,wb_mux_out, wb_temp_out);
 
-hazDet : hazard_detection port map (
+hazDet : hazard_detection port map (,hazdet_ifid_rs,hazdet_ifid_rt,hazdet_stallreq);
 
 --Pipeline
-/*
 
-if (clk'event and clk = '1') then
---STAGE 5
-if (index(4) = '1') then
--------------
--------------
-	index(4) <= '0';
-end if;
---STAGE 4
-if (index(3) = '1') then
----------------
----------------
-	index(4) <= '1';
-	index(3) <= '0';
-end if;
---STAGE 3
-if (index(2) = '1') then
----------------
----------------
-	index(3) <= '1';
-	index(2) <= '0';
-end if;
---STAGE 2
-if (index(1) = '1') then
----------------
----------------
-	index(2) <= '1';
-	index(1) <= '0';
-end if;
---STAGE 1
-if (index(0) = '1') then
----------------
----------------
-	index(1) <= '1';
-end if;
+end process;
 
-end if;
-*/
+printing : process (clk)
+	VARIABLE output_line : line;
+    VARIABLE output_cmd : std_logic_vector(31 downto 0);
+	variable ind : integer := 0;
+
+    BEGIN
+	while ind < 10000 loop
+		ind := ind + 1;
+	end loop;
+	
+	file_open(file_output, "register_file.txt", write_mode);
+	
+	
+	
+	while not endfile(file_input) and cur_line <= trgt_line loop
+    		readline(file_input, input_line);
+		if cur_line = trgt_line then
+			read(input_line, input_cmd);
+			instrCode <= input_cmd;
+		end if;
+		cur_line := cur_line +1;
+	end loop;
+	file_close(file_input);
 end process;
 
 end behavioral;
