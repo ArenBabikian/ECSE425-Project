@@ -137,7 +137,7 @@ architecture behavioral of pipeline is
 					mem_en : IN STD_LOGIC;
 					MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 					AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-					IR_Out : OUT STD_LOGIC_VECTOR(31 downto 0)
+					IR_Out : OUT STD_LOGIC_VECTOR(31 downto 0);
 
 					readmemory : in std_logic;
 					data_address : in std_logic_vector(31 DOWNTO 0));

@@ -5,13 +5,14 @@ USE IEEE.STD_LOGIC_TEXTIO.ALL;
 USE STD.TEXTIO.ALL;
 
 ENTITY InstrMem is
+GENERIC(
+	ram_size : INTEGER := 32768);
 PORT (
 	clock : IN std_logic;
 	progCount : IN std_logic_vector (31 downto 0);
 	WriteDataMem: IN std_logic_vector(31 downto 0);
 	initializeMem : IN std_logic;
-	instrCode : OUT std_logic_vector (31 downto 0)
-	);
+	instrCode : OUT std_logic_vector (31 downto 0));
 END InstrMem;
 
 ARCHITECTURE behavioral OF InstrMem is
@@ -26,19 +27,17 @@ ARCHITECTURE behavioral OF InstrMem is
 	    readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	    waitrequest: OUT STD_LOGIC);
 	END COMPONENT;
-
+	SIGNAL progCount_int : INTEGER;
 BEGIN
-mem1: memory port map(clock,WriteDataMem,progCount,initializeMem,data, OPEN);
+mem1: memory port map(clock,WriteDataMem,progCount_int,initializeMem,data, OPEN);
 
   PROCESS(progCount,initializeMem)
-
+	BEGIN
+		progCount_int <= to_integer(unsigned(progCount));
 		IF(initializeMem = '0') THEN
 			instrCode <= data;
 		ELSE
 			instrCode <= "00000000000000000000000000100000";
 		END IF;
-
-
   END PROCESS;
-
 END ARCHITECTURE;
