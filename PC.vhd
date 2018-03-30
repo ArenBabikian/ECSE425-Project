@@ -2,11 +2,11 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY pc is
-PORT( pc_in : IN STD_LOGIC_VECTOR(32 DOWNTO 0);
+PORT( pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0) := x"0000000000";
       enable : IN STD_LOGIC;
       clock : IN STD_LOGIC;
       reset : IN STD_LOGIC;
-      pc_out : OUT STD_LOGIC_VECTOR(32 DOWNTO 0));
+      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 END pc;
 
 ARCHITECTURE pc_arch OF pc is
