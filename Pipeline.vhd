@@ -7,8 +7,9 @@ port (
 	clk : in std_logic;
 	reset : in std_logic;
 	initializeMem : in std_logic;
-	writeInstrData : in std_logic_vector(31 DOWNTO 0)
-  );
+	writeInstrData : in std_logic_vector(31 DOWNTO 0);
+	data_address : in std_logic_vector(31 DOWNTO 0);
+	data : out std_logic_vector(31 DOWNTO 0));
 end pipeline;
 
 architecture behavioral of pipeline is
