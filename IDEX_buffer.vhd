@@ -4,7 +4,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ENTITY IDEX_buffer IS
 -- Placeholder name for now
 PORT( clock : IN STD_LOGIC;
-      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      ONE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       rs_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       rt_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       extendData_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -13,7 +13,7 @@ PORT( clock : IN STD_LOGIC;
       SEL2_in : IN STD_LOGIC;
       ALUCtr_in : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 
-      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      ONE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       rs_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       rt_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       extendData_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -28,7 +28,7 @@ BEGIN
 PROCESS(clock)
   BEGIN
   IF(clock'EVENT AND clock = '1') THEN
-    pc_out <= pc_in;
+    ONE_out <= ONE_in;
     rs_data_out <= rs_data_in;
     rt_data_out <= rt_data_in;
     extendData_out <= extendData_in;
