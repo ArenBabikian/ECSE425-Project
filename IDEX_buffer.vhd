@@ -11,9 +11,9 @@ PORT( clock : IN STD_LOGIC;
       SEL1_in : IN STD_LOGIC;
       SEL2_in : IN STD_LOGIC;
       ALUCtr_in : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-      WriteToReg_in : OUT STD_LOGIC;
-      WriteToMem_in : OUT STD_LOGIC;
-      BranchCtrl_in : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+      WriteToReg_in : IN STD_LOGIC;
+      WriteToMem_in : IN STD_LOGIC;
+      BranchCtrl_in : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
 
       pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       rs_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);

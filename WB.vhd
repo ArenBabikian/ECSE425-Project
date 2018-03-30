@@ -5,13 +5,12 @@ USE IEEE.STD_LOGIC_SIGNED.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY WB IS
--- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
 	PORT(
         mux_sel : IN std_logic;
 		mem_in : IN std_logic_vector (31 downto 0);
 		alu_in  : IN std_logic_vector (31 downto 0);
 		temp_in : IN std_logic_vector (31 downto 0);
-		
+
 		mux_out : out std_logic_vector (31 downto 0);
 		temp_out : out std_logic_vector (31 downto 0)
 	);
