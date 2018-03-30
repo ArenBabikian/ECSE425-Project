@@ -1,4 +1,5 @@
 --Adapted from Example 12-15 of Quartus Design and Synthesis handbook
+--Memory is word addresable
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
@@ -40,8 +41,8 @@ BEGIN
 			END LOOP;
 		end if;
 
-		--This is the actual synthesizable SRAM block
-		IF (clock'event AND clock = '1' AND address rem 32 = 0) THEN
+		--This is the actual synthesizable SRAM block.
+		IF (clock'event AND clock = '1' AND address + 3 < 32768 AND address >= 0) THEN
 			IF (memwrite = '1') THEN
 				ram_block(address) <= writedata(31 downto 24);
         ram_block(address+1) <= writedata(23 downto 16);
