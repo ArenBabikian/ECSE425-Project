@@ -74,11 +74,11 @@ architecture behavioral of pipeline is
 		PORT( clock : IN STD_LOGIC;
 					memdata_in : IN std_logic_vector (31 downto 0);
 					aludata_in : IN std_logic_vector (31 downto 0);
-					temp_in : IN std_logic_vector (31 downto 0);
+					IR_in : IN std_logic_vector (31 downto 0);
 					WriteToReg_in : IN std_logic;
 					memdata_out : out std_logic_vector (31 downto 0);
 					aludata_out : out std_logic_vector (31 downto 0);
-					temp_out : out std_logic_vector (31 downto 0);
+					IR_out : out std_logic_vector (31 downto 0);
 					WriteToReg_out : OUT std_logic);
 	END component;
 
@@ -153,9 +153,9 @@ architecture behavioral of pipeline is
 		PORT(
 					mem_in : IN std_logic_vector (31 downto 0);
 					alu_in  : IN std_logic_vector (31 downto 0);
-					temp_in : IN std_logic_vector (31 downto 0);
+					ir_in : IN std_logic_vector (31 downto 0);
 					mux_out : out std_logic_vector (31 downto 0);
-					temp_out : out std_logic_vector (31 downto 0));
+					ir_out : out std_logic_vector (31 downto 0));
 	END component;
 
 	--Hazard Detection

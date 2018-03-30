@@ -27,7 +27,7 @@ ARCHITECTURE behavioral OF InstrMem is
 	    readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
 	    waitrequest: OUT STD_LOGIC);
 	END COMPONENT;
-	SIGNAL progCount_int : INTEGER;
+	SIGNAL progCount_int : INTEGER RANGE 0 TO ram_size-1;
 BEGIN
 mem1: memory port map(clock,WriteDataMem,progCount_int,initializeMem,data, OPEN);
 
