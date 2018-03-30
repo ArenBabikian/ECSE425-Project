@@ -5,8 +5,9 @@ use ieee.numeric_std.all;
 entity pipeline is
 port (
 	clk : in std_logic;
-	reset : in std_logic
-  );
+	reset : in std_logic;
+	data_address : in std_logic_vector();
+	data : out std_logic_vector());
 end pipeline;
 
 architecture behavioral of pipeline is
