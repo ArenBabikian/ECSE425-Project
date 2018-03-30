@@ -96,26 +96,27 @@ architecture behavioral of pipeline is
 	END component;
 
 	Component ID is
-		PORT( clock : IN STD_LOGIC;
-		      reset : IN STD_LOGIC;
-		      IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      wb_mux : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      reg_en : IN STD_LOGIC;
-		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      rs_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      rt_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      extendData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      SEL1 : OUT STD_LOGIC;
-		      SEL2 : OUT STD_LOGIC;
-		      ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
-		      WriteToReg : OUT STD_LOGIC;
-		      WriteToMem : OUT STD_LOGIC;
-		      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
-					readRegister : in std_logic;
-					register_address : in std_logic_vector(4 DOWNTO 0));
+		PORT(
+			clock : IN STD_LOGIC;
+		    reset : IN STD_LOGIC;
+		    IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    wb_mux : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    reg_en : IN STD_LOGIC;
+		    IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    rs_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    rt_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    extendData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		    SEL1 : OUT STD_LOGIC;
+		    SEL2 : OUT STD_LOGIC;
+		    ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
+		    WriteToReg : OUT STD_LOGIC;
+		    WriteToMem : OUT STD_LOGIC;
+		    BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+			readRegister : in std_logic;
+			register_address : in std_logic_vector(4 DOWNTO 0));
 	END component;
 
 	Component EX is
