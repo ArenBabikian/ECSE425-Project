@@ -1,7 +1,8 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+-- Program Counter module
 ENTITY pc is
+  -- pc must be initialized to 0x0.
 PORT( pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0) := "00000000000000000000000000000000";
       enable : IN STD_LOGIC;
       clock : IN STD_LOGIC;

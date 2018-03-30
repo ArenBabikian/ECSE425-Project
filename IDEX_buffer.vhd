@@ -1,6 +1,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-
+-- Buffer between instruction decode stage and execute stage
 ENTITY IDEX_buffer IS
 PORT( clock : IN STD_LOGIC;
       pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -31,6 +31,7 @@ ARCHITECTURE IDEX_buffer_arch OF IDEX_buffer is
 BEGIN
 PROCESS(clock)
   BEGIN
+  -- Propagating signals through the pipeline
   IF(clock'EVENT AND clock = '1') THEN
     pc_out <= pc_in;
     rs_data_out <= rs_data_in;

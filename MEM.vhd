@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-
+-- Memory stage
 ENTITY MEM IS
 generic(
 	ram_size : INTEGER := 32768
