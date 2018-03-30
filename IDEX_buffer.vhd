@@ -23,7 +23,8 @@ PORT( clock : IN STD_LOGIC;
 END IDEX_buffer;
 
 ARCHITECTURE IDEX_buffer_arch OF IDEX_buffer is
-  buffer: PROCESS(clock)
+BEGIN
+PROCESS(clock)
   BEGIN
     ONE_out <= ONE_in;
     TWO_out <= TWO_in;
@@ -33,5 +34,5 @@ ARCHITECTURE IDEX_buffer_arch OF IDEX_buffer is
     SEL1_out <= SEL1_in;
     SEL2_out <= SEL2_in;
     ALUCtr_out <= ALUCtr_in;
-  END PROCESS buffer;
+END PROCESS;
 END IDEX_buffer_arch;
