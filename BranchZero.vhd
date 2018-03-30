@@ -16,17 +16,17 @@ ARCHITECTURE Behavioral OF BranchZero is
   BEGIN
     PROCESS(rs,rt,branchCtrl)
       BEGIN
-      IF(branchCtrl = "00") THEN --j
-        BranchTaken <= '1';
+      IF(branchCtrl = "00") THEN --J
+        BranchTaken <= '1';--When Jumping we are always taking the BranchTaken
       ELSIF(branchCtrl  = "01") THEN -- BEQ
         IF(to_integer(unsigned(rs)) - to_integer(unsigned(rt)) = 0) THEN
-          BranchTaken <= '1';
+          BranchTaken <= '1'; -- Only jump when equal to each other
         ELSE
           BranchTaken <= '0';
         END IF;
       ELSIF(branchCtrl = "10") THEn --BNEQ
         IF(to_integer(unsigned(rs)) - to_integer(unsigned(rt)) /= 0) THEN
-          BranchTaken <= '1';
+          BranchTaken <= '1'; -- Only jump when not equal to each other
         ELSE
           BranchTaken <= '0';
         END IF;
