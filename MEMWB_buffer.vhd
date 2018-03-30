@@ -17,6 +17,7 @@ ARCHITECTURE MEMWB_buffer_arch OF MEMWB_buffer is
 BEGIN
 PROCESS(clock)
 	BEGIN
+	-- Propagating signals through the pipeline
 		IF (clock'EVENT AND clock = '1') THEN
 			memdata_out <= memdata_in;
 			aludata_out <= aludata_in;

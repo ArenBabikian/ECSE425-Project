@@ -13,10 +13,11 @@ ARCHITECTURE hazard_detection_arch of hazard_detection is
 SIGNAL R : STD_LOGIC;
 SIGNAL rd : STD_LOGIC_VECTOR(4 DOWNTO 0);
 BEGIN
-  RD <= exmem_IR(15 DOWNTO 11);
+  rd <= exmem_IR(15 DOWNTO 11);
   -- checks if it is a R instruction
   R <= '1' WHEN(exmem_IR(31 DOWNTO 26)="000000") ELSE '0';
   -- If R instruction, hazard occurs if rd is the same as rs or rt
-  STALL_REQUEST <= '1' WHEN ((rd = rs or rd = rt) AND R='1')
+  -- rd /= "00000" is required to make sure a stall does not create another stall
+  STALL_REQUEST <= '1' WHEN ((rd = rs or rd = rt) AND R='1' AND rd /= "00000")
                        ELSE '0';
 END hazard_detection_arch;
