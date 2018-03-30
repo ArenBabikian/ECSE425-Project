@@ -4,6 +4,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 ENTITY ifid_buffer IS
 PORT( clock : IN STD_LOGIC;
       pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      stall_request : IN STD_LOGIC;
       IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
