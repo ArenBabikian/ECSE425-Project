@@ -10,7 +10,10 @@ port (
 	writeInstrData : in std_logic_vector(31 DOWNTO 0);
 	memoryread : in std_logic;
 	address_data : in std_logic_vector(31 DOWNTO 0);
-	data : out std_logic_vector(31 DOWNTO 0));
+	data : out std_logic_vector(31 DOWNTO 0);
+	registerRead : in std_logic;
+	register_address : in std_logic_vector(4 DOWNTO 0);
+	registerData : out std_logic_vector(31 DOWNTO 0));
 end pipeline;
 
 architecture behavioral of pipeline is
@@ -110,7 +113,9 @@ architecture behavioral of pipeline is
 		      ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
 		      WriteToReg : OUT STD_LOGIC;
 		      WriteToMem : OUT STD_LOGIC;
-		      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
+		      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
+					readRegister : in std_logic;
+					register_address : in std_logic_vector(4 DOWNTO 0));
 	END component;
 
 	Component EX is
@@ -196,7 +201,7 @@ pc_en <= not stall;
 --port maps
 IFstg : IFStage port map (exmem_Branch_Taken_out,exmem_ALU_out,pc_en,clk,reset,writeInstrData,initializeMem,if_NEXT_PC,if_InstructionValue);
 IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out);
-IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl);
+IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,registerRead, register_address);
 IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,idex_BranchCtrl_out);
 EXstg : EX port map (idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_BranchCtrl_out,ex_ALU_OUT,ex_Branch_Taken,ex_rt_data_OUT,ex_IR_OUT);
 EXMEMbuf : EXMEM_buffer port map (clk,ex_Branch_Taken,ex_ALU_OUT,ex_rt_data_OUT,ex_IR_OUT,idex_WriteToReg_out,idex_WriteToMem_out,exmem_WriteToRegOutEXMEM,exmem_WriteToMemOutEXMEM,exmem_Branch_Taken_out,exmem_ALU_out,exmem_rt_data_out,exmem_IR_out);
@@ -207,5 +212,5 @@ WBstg : WB port map (memwb_memdata_out,memwb_aludata_out, memwb_ir_out,wb_mux_ou
 hazDet : hazard_detection port map (exmem_IR_out,ifid_ir_out(25 DOWNTO 21),ifid_ir_out(20 DOWNTO 16),stall);
 
 data <= mem_MemoryData;
-
+registerData <= if_rs_data;
 end behavioral;
