@@ -55,15 +55,6 @@ end component;
 SIGNAL add4Out : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL pcout : STD_LOGIC_VECTOR(31 downto 0);
 signal muxout : STD_Logic_vector (31 downto 0);
---SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
---SIGNAL ZEROALU : STD_LOGIC;
-
---File R/W
-FILE file_input : text;
-FILE file_output : text;
-CONSTANT command_size : natural := 32;
-SIGNAL input_command : std_logic_vector (command_size-1 downto 0);
-SIGNAL output_command : std_logic_vector(command_size-1 downto 0);
 
 BEGIN
 fouradder: add4 port map(pcout, add4out);

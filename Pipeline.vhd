@@ -46,7 +46,14 @@ architecture behavioral of pipeline is
 	--STAGE COMPONENTS
 	Component IFStage is
 		PORT( 
+			SELMUX : IN STD_LOGIC;
+			MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+			PCEnable : IN STD_logic;
+			PCClk : IN STD_Logic;
+			PCRESET : IN STD_Logic;
 
+		        NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+			InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
 		);
 	END component;
 
@@ -135,6 +142,19 @@ begin
 
 process (clk)
 begin
+
+--port maps
+IFstg : IFStage port map (
+IFDbuf : IFID_Buffer port map (
+IDstg : ID port map (
+IDEXbuf : IDEX_buffer port map (
+EXstg : EX port map (
+EXMEMbuf : EXMEM_buffer port map (
+MEMstg : MEM port map (
+MEMWBbuf : MEMWB_buffer port map (
+WBstg : WB port map (
+
+--Pipeline
 
 
 if (clk'event and clk = '1') then
