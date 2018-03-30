@@ -13,7 +13,10 @@ generic(
 				mem_en : IN STD_LOGIC;
 				MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 				AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-				IR_Out : OUT STD_LOGIC_VECTOR(31 downto 0));
+				IR_Out : OUT STD_LOGIC_VECTOR(31 downto 0)
+
+				readmemory : in std_logic;
+				data_address : in std_logic_vector(31 DOWNTO 0));
 END MEM;
 
 ARCHITECTURE MEM_arch OF MEM IS
@@ -36,7 +39,11 @@ mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,MemoryData, OPEN);
 
   PROCESS (AluData)
     BEGIN
-	memAddress <= to_integer(unsigned(AluData));
+		if readmemory = '0' then
+			memAddress <= to_integer(unsigned(AluData));
+		else
+			memAddress <= to_integer(unsigned(data_address));
+		end if;
 	IR_Out <= IR;
   END PROCESS;
 
