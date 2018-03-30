@@ -40,7 +40,7 @@ mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,MemoryData, OPEN);
   PROCESS (AluData)
     BEGIN
 		if readmemory = '0' then
-			memAddress <= to_integer(unsigned(AluData));
+			memAddress <= to_integer(unsigned(AluData(14 downto 0)));
 		else
 			memAddress <= to_integer(unsigned(data_address));
 		end if;

@@ -1,17 +1,17 @@
 proc AddWaves {} {
 	;#Add waves we're interested in to the Wave window
-    add wave -position end sim:/pipeline_tb/clk
-    add wave -position end sim:/pipeline_tb/s_a
-    add wave -position end sim:/pipeline_tb/s_b
-    add wave -position end sim:/pipeline_tb/s_c
-    add wave -position end sim:/pipeline_tb/s_d
-    add wave -position end sim:/pipeline_tb/s_e
-    add wave -position end sim:/pipeline_tb/s_op1
-    add wave -position end sim:/pipeline_tb/s_op2
-    add wave -position end sim:/pipeline_tb/s_op3
-    add wave -position end sim:/pipeline_tb/s_op4
-    add wave -position end sim:/pipeline_tb/s_op5
-    add wave -position end sim:/pipeline_tb/s_final_output
+    add wave -position end sim:/testbench/clk
+    add wave -position end sim:/testbench/reset
+    add wave -position end sim:/testbench/initializeMem
+    add wave -position end sim:/testbench/writeInstrData
+    add wave -position end sim:/testbench/memoryread
+    add wave -position end sim:/testbench/address_data
+    add wave -position end sim:/testbench/data
+    add wave -position end sim:/testbench/s_op2
+    add wave -position end sim:/testbench/s_op3
+    add wave -position end sim:/testbench/s_op4
+    add wave -position end sim:/testbench/s_op5
+    add wave -position end sim:/testbench/s_final_output
 }
 
 vlib work
