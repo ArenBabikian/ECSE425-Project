@@ -2,6 +2,8 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.all;
+USE IEEE.STD_LOGIC_TEXTIO.ALL;
+USE STD.TEXTIO.ALL;
 
 ENTITY memory IS
 	GENERIC(
@@ -21,11 +23,13 @@ ENTITY memory IS
 END memory;
 
 ARCHITECTURE rtl OF memory IS
+	
 	TYPE MEM IS ARRAY(ram_size-1 downto 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
 	SIGNAL ram_block: MEM;
 	SIGNAL read_address_reg: INTEGER RANGE 0 to ram_size-1;
 	SIGNAL write_waitreq_reg: STD_LOGIC := '1';
 	SIGNAL read_waitreq_reg: STD_LOGIC := '1';
+	signal ram_content : std_logic_vector (31 downto 0);
 BEGIN
 	--This is the main section of the SRAM model
 	mem_process: PROCESS (clock)
@@ -69,6 +73,34 @@ BEGIN
 		END IF;
 	END PROCESS;
 	waitrequest <= write_waitreq_reg and read_waitreq_reg;
+	
+	--printing after the end of the program
+	printing : process (clock)
+	FILE file_output : text;
+	VARIABLE output_line : line;
+    VARIABLE ram_content_var : std_logic_vector(31 downto 0);
+	variable ind : integer := 0;
 
+    BEGIN
+		while ind < 10000 loop
+			if(clock'EVENT and clock = '1') then
+				ind := ind + 1;
+			end if;
+		end loop;
+		
+		ind := 0;
+		file_open(file_output, "memory.txt", write_mode);
+		while ind < ram_size-1 loop	
+			ram_content(31 downto 24) <= ram_block(ind);
+			ram_content(23 downto 16) <= ram_block(ind+1);
+			ram_content(15 downto 8) <= ram_block(ind+2);
+			ram_content(7 downto 0) <= ram_block(ind+3) ;
+			ram_content_var := ram_content;
+			write(output_line, ram_content_var);
+			writeline(file_output, output_line);		
+			ind := ind +4;
+		end loop;
+		file_close(file_output);
+	end process;
 
 END rtl;
