@@ -29,11 +29,12 @@ END COMPONENT;
 
 COMPONENT ALU is
   PORT(
-    Data1: in STD_LOGIC_VECTOR (31 downto 0);
-    Data2: in STD_LOGIC_VECTOR (31 downto 0);
-    ALUCtr : in  STD_LOGIC_VECTOR (4 downto 0);
-    Zero : out STD_LOGIC;
-    ALU_Result : out STD_LOGIC_VECTOR (31 downto 0));
+  Data1: in STD_LOGIC_VECTOR (31 downto 0);
+  Data2: in STD_LOGIC_VECTOR (31 downto 0);
+  ALUCtr : in  STD_LOGIC_VECTOR (4 downto 0);
+  IR : in STD_LOGIC_VECTOR(31 downto 0);
+  Zero : out STD_LOGIC;
+  ALU_Result : out STD_LOGIC_VECTOR (31 downto 0));
 END COMPONENT;
 
 COMPONENT BranchZero is
@@ -51,7 +52,7 @@ SIGNAL ZEROALU : STD_LOGIC;
 BEGIN
 mux1: mux port map(SEL1,pc_in,rs_data,X1);
 mux2: mux port map(SEL2,rt_data,extendData,X2);
-ALU1: ALU port map(X1,X2,ALUCtr1,ZEROALU,ALU_OUT);
+ALU1: ALU port map(X1,X2,ALUCtr1,IR,ZEROALU,ALU_OUT);
 BranchZero1: BranchZero PORT MAP(rs_data,rt_data,BranchCtrl1,Branch_Taken);
 
 rt_data_OUT <= rt_data;
