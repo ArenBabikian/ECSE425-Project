@@ -5,7 +5,6 @@ use ieee.numeric_std.all;
 entity pipeline is
 port (
 	clk : in std_logic;
-	reset : in std_logic;
   );
 end pipeline;
 
@@ -16,11 +15,13 @@ architecture behavioral of pipeline is
 		PORT( 
 			clock : IN STD_LOGIC;
 			pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+			pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+			pc_en : OUT STD_LOGIC;
 			stall_request : IN STD_LOGIC;
 			IR : IN STD_LOGIC_VECTOR(0 TO 31);
-			
-			pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+			IR_out : OUT STD_LOGIC_VECTOR(0 TO 31);
+			IFID_REGISTER1 : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
+			IFID_REGISTER2 : OUT STD_LOGIC_VECTOR(4 DOWNTO 0)
 		);
 	END component;
 
@@ -32,29 +33,13 @@ architecture behavioral of pipeline is
 
 	Component EXMEM_buffer is
 		PORT( 
-			clock : IN STD_LOGIC;
-			Branch_Taken_in : IN STD_LOGIC;
-			ALU_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			THREE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FIVE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		   
-			Branch_Taken_out : OUT STD_LOGIC;
-			ALU_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			THREE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-			FIVE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
+
 		);
 	END component;
 
 	Component MEMWB_buffer is
 		PORT( 
-			clock : IN STD_LOGIC;
-			memdata_in : IN std_logic_vector (31 downto 0);
-			aludata_in : IN std_logic_vector (31 downto 0);
-			temp_in : IN std_logic_vector (31 downto 0);
-			
-			memdata_out : out std_logic_vector (31 downto 0);
-			aludata_out : out std_logic_vector (31 downto 0);
-			temp_out : out std_logic_vector (31 downto 0)
+
 		);
 	END component;
 	
@@ -66,8 +51,8 @@ architecture behavioral of pipeline is
 			PCEnable : IN STD_logic;
 			PCClk : IN STD_Logic;
 			PCRESET : IN STD_Logic;
-			
-		    NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+
+		        NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 			InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
 		);
 	END component;
@@ -102,36 +87,18 @@ architecture behavioral of pipeline is
 			WriteDataMem : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 			Temp : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 			mem_en : IN STD_LOGIC;
-			SEL2 : IN STD_LOGIC_VECTOR(31 DOWNTO 0)
-			
 			MemoryData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 			AluDataOut : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 			Temp_Out : OUT STD_LOGIC;
+			SEL2 : IN STD_LOGIC_VECTOR(31 DOWNTO 0));
 		);
 	END component;
 
 	Component WB is
 		PORT( 
-			mux_sel : IN std_logic;
-			mem_in : IN std_logic_vector (31 downto 0);
-			alu_in  : IN std_logic_vector (31 downto 0);
-			temp_in : IN std_logic_vector (31 downto 0);
-			
-			mux_out : out std_logic_vector (31 downto 0);
-			temp_out : out std_logic_vector (31 downto 0)
+
 		);
 	END component;
-	
-	--Hazard Detection
-	component hazard_detection is
-		PORT(
-			IDEX_REGISTER : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-			IFID_REGISTER1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-			IFID_REGISTER2 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
-			STALL_REQUEST : OUT STD_LOGIC)
-		);
-	end component;
-	
 
 
 -- test signals
@@ -153,34 +120,23 @@ architecture behavioral of pipeline is
 	SIGNAL m_writedata : std_logic_vector (7 DOWNTO 0);
 	SIGNAL m_waitrequest : std_logic;
 
+--File R/W
+FILE file_input : text;
+FILE file_output : text;
+CONSTANT command_size : natural := 32;
+SIGNAL input_command : std_logic_vector (command_size-1 downto 0);
+SIGNAL output_command : std_logic_vector(command_size-1 downto 0);
 
 
 
 
---Temporary variables
---signal index : std_logic_vector(5 downto 0) := "00001";
-
---hazard detection	
-signal hazdet_stallreq : std_logic;
---if stage
-signal if_next_pc, if_instr_val : std_logic_vector(31 downto 0);
---ifid buffer
-signal ifid_pc_out, ifid_ir_out :std_logic_vector(31 downto 0);
---id stage
-
---idex buffer
-
---ex stage
-signal 
---exmem buffer
-signal exmem_branch_taken : std_logic;
-signal exmem_alu_out, exmem_three_out, exmem_five_out : std_logic_vector(31 downto 0);
---mem stage
-signal mem_data_out, mem_alu_out, mem_tmp_out : std_logic_vector(31 downto 0);
---memwb buffer
-signal  memwb_data_out, memwb_alu_out, memwb_tmp_out : std_logic_vector(31 downto 0);
---wb stage
-signal wb_mux_out, wb_temp_out : std_logic_vector(31 downto 0);
+signal index : std_logic_vector(5 downto 0) := "00001";
+signal tempOP1, tempOP2, tempOP3, tempOP4, tempOP5, 
+	tempA1, tempC1, tempD1, tempE1,
+	tempA2, tempC2, tempD2, tempE2,
+	tempA3, tempE3, tempOP21,
+	tempOP22, tempOP31,
+	tempOP23 : integer := 0;
 
 begin
 
@@ -188,58 +144,133 @@ process (clk)
 begin
 
 --port maps
-IFstg : IFStage port map (exmem_branch_taken,exmem_alu_out,not hazdet_stallreq,clk,reset,if_next_pc,if_instr_val);
-IFIDbuf : IFID_Buffer port map (clk,if_next_pc,hazdet_stallreq,if_instr_val,ifid_pc_out,ifid_ir_out);
-IDstg : ID port map ( );
-IDEXbuf : IDEX_buffer port map ( );
-EXstg : EX port map ( );
-EXMEMbuf : EXMEM_buffer port map (clk,,,,,exmem_branch_taken,exmem_alu_out,exmem_three_out,exmem_five_out);
-MEMstg : MEM port map (clk,exmem_alu_out,exmem_three_out,exmem_five_out,,,mem_data_out,mem_alu_out,mem_tmp_out);
-MEMWBbuf : MEMWB_buffer port map (clk,mem_data_out,mem_alu_out,mem_tmp_out,memwb_data_out,memwb_alu_out,memwb_tmp_out);
-WBstg : WB port map (,memwb_data_out,memwb_alu_out,memwb_tmp_out,wb_mux_out, wb_temp_out);
-
-hazDet : hazard_detection port map (
+IFstg : IFStage port map (
+IFDbuf : IFID_Buffer port map (
+IDstg : ID port map (
+IDEXbuf : IDEX_buffer port map (
+EXstg : EX port map (
+EXMEMbuf : EXMEM_buffer port map (
+MEMstg : MEM port map (
+MEMWBbuf : MEMWB_buffer port map (
+WBstg : WB port map (
 
 --Pipeline
-/*
+
 
 if (clk'event and clk = '1') then
+
+
+
 --STAGE 5
 if (index(4) = '1') then
 -------------
--------------
+
+	
+op5 <= tempOP31 * tempOP4;
+
+	tempOP5 <= tempOP31 * tempOP4;
+	tempOP23 <= tempOP22;
+
+
+
+
+
+---------------	
+	index(5) <= '1';
 	index(4) <= '0';
 end if;
+
+
 --STAGE 4
 if (index(3) = '1') then
 ---------------
+
+
+
+
+op4 <= tempA3 - tempE3;
+
+	tempOP4 <= tempA3 - tempE3;
+	tempOP31 <= tempOP3;
+	tempOP22 <= tempOP21;	
+
+
+
+
+
 ---------------
 	index(4) <= '1';
 	index(3) <= '0';
 end if;
+
+
 --STAGE 3
 if (index(2) = '1') then
 ---------------
+
+
+
+	op3 <= tempC2 * tempD2;
+
+	tempOP3 <= tempC2 * tempD2;
+	tempOP21 <= tempOP2;
+	tempA3 <= tempA2;
+	tempE3 <= tempE2;
+
+
+
 ---------------
 	index(3) <= '1';
 	index(2) <= '0';
 end if;
+
 --STAGE 2
 if (index(1) = '1') then
 ---------------
+
+
+
+
+
+
+	op2 <= tempOP1 * 42;
+
+	tempOP2 <= tempOP1 * 42;
+	tempA2 <= tempA1;
+	tempC2 <= tempC1;
+	tempD2 <= tempD1;
+	tempE2 <= tempE1;
+
+
+
 ---------------
 	index(2) <= '1';
 	index(1) <= '0';
 end if;
+
 --STAGE 1
 if (index(0) = '1') then
 ---------------
+
+	op1 <= a + b;
+
+	tempOP1 <= a + b;
+	tempA1 <= a;
+	tempC1 <= c;
+	tempD1 <= d;
+	tempE1 <= e;
+
+
+
+
 ---------------
 	index(1) <= '1';
 end if;
 
+			
+
 end if;
-*/
+
 end process;
 
 end behavioral;
