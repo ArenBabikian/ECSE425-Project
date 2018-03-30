@@ -5,18 +5,19 @@ ENTITY IDEX_buffer IS
 -- Placeholder name for now
 PORT( clock : IN STD_LOGIC;
       ONE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      TWO_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      THREE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      FOUR_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      FIVE_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      rs_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      rt_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      extendData_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      IR_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       SEL1_in : IN STD_LOGIC;
       SEL2_in : IN STD_LOGIC;
       ALUCtr_in : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+
       ONE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      TWO_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      THREE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      FOUR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      FIVE_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      rs_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      rt_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      extendData_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       SEL1_out : OUT STD_LOGIC;
       SEL2_out : OUT STD_LOGIC;
       ALUCtr_out : OUT STD_LOGIC_VECTOR(3 DOWNTO 0));
@@ -28,10 +29,10 @@ PROCESS(clock)
   BEGIN
   IF(clock'EVENT AND clock = '1') THEN
     ONE_out <= ONE_in;
-    TWO_out <= TWO_in;
-    THREE_out <= THREE_in;
-    FOUR_out <= FOUR_in;
-    FIVE_out <= FIVE_in;
+    rs_data_out <= rs_data_in;
+    rt_data_in <= rt_data_out;
+    extendData_out <= extendData_out;
+    IR_out <= IR_in;
     SEL1_out <= SEL1_in;
     SEL2_out <= SEL2_in;
     ALUCtr_out <= ALUCtr_in;
