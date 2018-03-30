@@ -10,6 +10,8 @@ ENTITY IFStage IS
       	PCEnable : IN STD_logic;
       	PCClk : IN STD_Logic;
       	PCRESET : IN STD_Logic;
+        writeInstrData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        initializeMem : IN STD_LOGIC;
         NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 	      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0));
 END IFStage;
@@ -42,10 +44,13 @@ COMPONENT PC is
 END COMPONENT;
 
 Component InstrMem is
-Port(
-	progCount : IN std_logic_vector (31 downto 0);
-	instrCode : OUT std_logic_vector (31 downto 0)
-	);
+  PORT (
+  	clock : IN std_logic;
+  	progCount : IN std_logic_vector (31 downto 0);
+  	WriteDataMem: IN std_logic_vector(31 downto 0);
+  	initializeMem : IN std_logic;
+  	instrCode : OUT std_logic_vector (31 downto 0)
+  	);
 end component;
 
 SIGNAL add4Out : STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -56,7 +61,7 @@ BEGIN
 fouradder: add4 port map(pcout, add4out);
 pcmux: mux port map(SELMUX,MUXBRANCHIN,add4out,muxout);
 progcount: pc port map(muxout,PCEnable,PCClk,PCReset,pcout);
-InstructionConverter: instrMem port map(pcout, instructionValue);
+InstructionConverter: instrMem port map(PCClk,pcout,writeInstrData,initializeMem, instructionValue);
 
 next_pc <= muxout;
 

@@ -23,7 +23,6 @@ COMPONENT memory IS
     writedata: IN STD_LOGIC_VECTOR (31 DOWNTO 0);
     address: IN INTEGER RANGE 0 TO ram_size-1;
     memwrite: IN STD_LOGIC;
-    memread: IN STD_LOGIC;
     readdata: OUT STD_LOGIC_VECTOR (31 DOWNTO 0);
     waitrequest: OUT STD_LOGIC);
 END COMPONENT;
@@ -31,10 +30,9 @@ END COMPONENT;
 SIGNAL AluDataSignal : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL memAddress : INTEGER;
 SIGNAL TempSignal : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL emptySignal : STD_LOGIC := '0';
 
 BEGIN
-mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,emptySignal,MemoryData, OPEN);
+mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,MemoryData, OPEN);
 
   PROCESS (AluData)
     BEGIN

@@ -5,7 +5,9 @@ use ieee.numeric_std.all;
 entity pipeline is
 port (
 	clk : in std_logic;
-	reset : in std_logic
+	reset : in std_logic;
+	initializeMem : in std_logic;
+	writeInstrData : in std_logic_vector(31 DOWNTO 0)
   );
 end pipeline;
 
@@ -82,6 +84,8 @@ architecture behavioral of pipeline is
 	      	PCEnable : IN STD_logic;
 	      	PCClk : IN STD_Logic;
 	      	PCRESET : IN STD_Logic;
+	        writeInstrData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        initializeMem : IN STD_LOGIC;
 	        NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0));
 	END component;
@@ -185,7 +189,7 @@ SIGNAL stall : std_logic;
 BEGIN
 pc_en <= not stall;
 --port maps
-IFstg : IFStage port map (exmem_Branch_Taken_out,exmem_ALU_out,pc_en,clk,reset,if_NEXT_PC,if_InstructionValue);
+IFstg : IFStage port map (exmem_Branch_Taken_out,exmem_ALU_out,pc_en,clk,reset,writeInstrData,initializeMem,if_NEXT_PC,if_InstructionValue);
 IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out);
 IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl);
 IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,idex_BranchCtrl_out);
