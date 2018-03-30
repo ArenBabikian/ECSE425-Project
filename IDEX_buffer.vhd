@@ -30,8 +30,8 @@ PROCESS(clock)
   IF(clock'EVENT AND clock = '1') THEN
     ONE_out <= ONE_in;
     rs_data_out <= rs_data_in;
-    rt_data_in <= rt_data_out;
-    extendData_out <= extendData_out;
+    rt_data_out <= rt_data_in;
+    extendData_out <= extendData_in;
     IR_out <= IR_in;
     SEL1_out <= SEL1_in;
     SEL2_out <= SEL2_in;
