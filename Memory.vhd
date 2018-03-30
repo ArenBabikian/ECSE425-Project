@@ -53,35 +53,4 @@ BEGIN
 		END IF;
 	END PROCESS;
 	readdata <= ram_block(read_address_reg) & ram_block(read_address_reg+1) & ram_block(read_address_reg+2) & ram_block(read_address_reg+3);
-
-
-	--printing after the end of the program
-	printing : process (clock)
-	FILE file_output : text;
-	VARIABLE output_line : line;
-    VARIABLE ram_content_var : std_logic_vector(31 downto 0);
-	variable ind : integer := 0;
-
-    BEGIN
-		while ind < 10000 loop
-			if(clock'EVENT and clock = '1') then
-				ind := ind + 1;
-			end if;
-		end loop;
-
-		ind := 0;
-		file_open(file_output, "memory.txt", write_mode);
-		while ind < ram_size-1 loop
-			ram_content(31 downto 24) <= ram_block(ind);
-			ram_content(23 downto 16) <= ram_block(ind+1);
-			ram_content(15 downto 8) <= ram_block(ind+2);
-			ram_content(7 downto 0) <= ram_block(ind+3) ;
-			ram_content_var := ram_content;
-			write(output_line, ram_content_var);
-			writeline(file_output, output_line);
-			ind := ind +4;
-		end loop;
-		file_close(file_output);
-	end process;
-
 END rtl;
