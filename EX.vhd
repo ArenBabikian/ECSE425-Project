@@ -1,7 +1,5 @@
-pc,LIBRARY IEEE;
+LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
-USE IEEE.STD_LOGIC_ARITH.ALL;
-USE IEEE.STD_LOGIC_SIGNED.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY EX IS
@@ -13,6 +11,7 @@ ENTITY EX IS
         SEL1 : IN STD_LOGIC;
         SEL2 : IN STD_LOGIC;
         ALUCtr1 : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        BranchCtrl1: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
         ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
         Branch_Taken :  OUT STD_LOGIC;
         rt_data_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -37,6 +36,14 @@ COMPONENT ALU is
     ALU_Result : out STD_LOGIC_VECTOR (31 downto 0));
 END COMPONENT;
 
+COMPONENT BranchZero is
+  PORT(
+    rs: in STD_LOGIC_VECTOR (31 downto 0);
+    rt: in STD_LOGIC_VECTOR (31 downto 0);
+    branchCtrl : in STD_LOGIC_VECTOR(1 downto 0);
+    BranchTaken : out STD_LOGIC);
+END COMPONENT;
+
 SIGNAL X1 : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL ZEROALU : STD_LOGIC;
@@ -45,8 +52,8 @@ BEGIN
 mux1: mux port map(SEL1,pc_in,rs_data,X1);
 mux2: mux port map(SEL2,rt_data,extendData,X2);
 ALU1: ALU port map(X1,X2,ALUCtr1,ZEROALU,ALU_OUT);
+BranchZero1: BranchZero PORT MAP(rs_data,rt_data,BranchCtrl1,Branch_Taken);
 
-Branch_Taken <= '1' WHEN (ZEROALU = '1') ELSE '0';
 rt_data_OUT <= rt_data;
 IR_OUT <= IR;
 
