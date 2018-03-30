@@ -26,6 +26,7 @@ ARCHITECTURE IDEX_buffer_arch OF IDEX_buffer is
 BEGIN
 PROCESS(clock)
   BEGIN
+  IF(clock'EVENT AND clock = '1') THEN
     ONE_out <= ONE_in;
     TWO_out <= TWO_in;
     THREE_out <= THREE_in;
@@ -34,5 +35,6 @@ PROCESS(clock)
     SEL1_out <= SEL1_in;
     SEL2_out <= SEL2_in;
     ALUCtr_out <= ALUCtr_in;
+  END IF;
 END PROCESS;
 END IDEX_buffer_arch;
