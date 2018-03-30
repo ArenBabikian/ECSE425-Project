@@ -2,7 +2,6 @@ LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY IDEX_buffer IS
--- Placeholder name for now
 PORT( clock : IN STD_LOGIC;
       pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       rs_data_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -12,6 +11,9 @@ PORT( clock : IN STD_LOGIC;
       SEL1_in : IN STD_LOGIC;
       SEL2_in : IN STD_LOGIC;
       ALUCtr_in : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+      WriteToReg_in : OUT STD_LOGIC;
+      WriteToMem_in : OUT STD_LOGIC;
+      BranchCtrl_in : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 
       pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       rs_data_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -20,7 +22,10 @@ PORT( clock : IN STD_LOGIC;
       IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       SEL1_out : OUT STD_LOGIC;
       SEL2_out : OUT STD_LOGIC;
-      ALUCtr_out : OUT STD_LOGIC_VECTOR(3 DOWNTO 0));
+      ALUCtr_out : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+      WriteToReg_out : OUT STD_LOGIC;
+      WriteToMem_out : OUT STD_LOGIC;
+      BranchCtrl_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
 END IDEX_buffer;
 
 ARCHITECTURE IDEX_buffer_arch OF IDEX_buffer is
@@ -36,6 +41,9 @@ PROCESS(clock)
     SEL1_out <= SEL1_in;
     SEL2_out <= SEL2_in;
     ALUCtr_out <= ALUCtr_in;
+    WriteToReg_out <= WriteToReg_in;
+    WriteToMem_out <= WriteToMem_in;
+    BranchCtrl_out <= BranchCtrl_in;
   END IF;
 END PROCESS;
 END IDEX_buffer_arch;
