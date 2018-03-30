@@ -24,9 +24,9 @@ ARCHITECTURE Behavioral OF Registers is
 	TYPE registers_type is ARRAY (31 DOWNTO 0) OF STD_LOGIC_VECTOR(31 DOWNTO 0);
 	SIGNAL registers_array : registers_type := (OTHERS => STD_LOGIC_VECTOR(TO_UNSIGNED(0, 32)));
 	signal reg_content : std_logic_vector(31 downto 0);
-  
+
   BEGIN
-  registering : PROCESS (clock, reset)
+  PROCESS (clock, reset)
     BEGIN
 
     IF(reset = '1') THEN
@@ -40,31 +40,4 @@ ARCHITECTURE Behavioral OF Registers is
       END IF;
     END IF;
   END PROCESS;
-  
-  	--printing after the end of the program
-	printing : process (clock)
-	FILE file_output : text;
-	VARIABLE output_line : line;
-    VARIABLE reg_content_var : std_logic_vector(31 downto 0);
-	variable ind : integer := 0;
-
-    BEGIN
-		while ind < 10000 loop
-			if(clock'EVENT and clock = '1') then
-				ind := ind + 1;
-			end if;
-		end loop;
-		
-		ind := 0;
-		file_open(file_output, "register_file.txt", write_mode);
-		while ind < 32 loop	
-			reg_content <= registers_array(ind);
-			reg_content_var := reg_content;
-			write(output_line, reg_content_var);
-			writeline(file_output, output_line);		
-			ind := ind +1;
-		end loop;
-		file_close(file_output);
-	end process;
-
 END Behavioral;
