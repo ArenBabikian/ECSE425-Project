@@ -30,7 +30,7 @@ architecture behavioral of pipeline is
 		      IR_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      SEL1_in : IN STD_LOGIC;
 		      SEL2_in : IN STD_LOGIC;
-		      ALUCtr_in : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+		      ALUCtr_in : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 		      WriteToReg_in : IN STD_LOGIC;
 		      WriteToMem_in : IN STD_LOGIC;
 		      BranchCtrl_in : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
@@ -41,7 +41,7 @@ architecture behavioral of pipeline is
 		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      SEL1_out : OUT STD_LOGIC;
 		      SEL2_out : OUT STD_LOGIC;
-		      ALUCtr_out : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+		      ALUCtr_out : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
 		      WriteToReg_out : OUT STD_LOGIC;
 		      WriteToMem_out : OUT STD_LOGIC;
 		      BranchCtrl_out : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
@@ -91,8 +91,8 @@ architecture behavioral of pipeline is
 		      reset : IN STD_LOGIC;
 		      IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      MEMWB_IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      rd : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+		      wb_mux : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      reg_en : IN STD_LOGIC;
 		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -135,7 +135,7 @@ architecture behavioral of pipeline is
 	END component;
 
 	Component WB is
-		PORT( 
+		PORT(
 					mem_in : IN std_logic_vector (31 downto 0);
 					alu_in  : IN std_logic_vector (31 downto 0);
 					temp_in : IN std_logic_vector (31 downto 0);
@@ -145,7 +145,7 @@ architecture behavioral of pipeline is
 
 	--Hazard Detection
 	component hazard_detection is
-		PORT( rd : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+		PORT( exmem_IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 	        rs : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 	        rt : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 	        STALL_REQUEST : OUT STD_LOGIC);
@@ -154,6 +154,7 @@ architecture behavioral of pipeline is
 -- signals connect the stages and buffers
 -- IF stage
 SIGNAL if_NEXT_PC , if_InstructionValue : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL pc_en : STD_LOGIC;
 -- IF/ID buffer
 SIGNAL ifid_ir_out, ifid_pc_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
 -- ID stage
@@ -164,8 +165,8 @@ SIGNAL if_sel1 , if_sel2 , if_write_to_reg , if_write_to_mem : STD_LOGIC;
 -- ID/EX buffer
 SIGNAL idex_pc_out , idex_rs_data_out , idex_rt_data_out , idex_extendData_out , idex_IR_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL idex_SEL1_out , idex_SEL2_out , idex_WriteToReg_out, idex_WriteToMem_out: STD_LOGIC;
-SIGNAL idex_ALUCtr_out : STD_LOGIC_VECTOR(3 DOWNTO 0);
-SIGNAL idex_BranchCtrl_out : STD_LOGIC_VECTOR(1 DOWNTO 0));
+SIGNAL idex_ALUCtr_out : STD_LOGIC_VECTOR(4 DOWNTO 0);
+SIGNAL idex_BranchCtrl_out : STD_LOGIC_VECTOR(1 DOWNTO 0);
 -- EX stage
 SIGNAL ex_ALU_OUT , ex_rt_data_OUT , ex_IR_OUT : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL ex_Branch_Taken : STD_LOGIC;
@@ -181,8 +182,10 @@ SIGNAL memwb_write_to_reg : STD_LOGIC;
 SIGNAL wb_mux_out, wb_ir_out : std_logic_vector (31 downto 0);
 -- Hazard Detection
 SIGNAL stall : std_logic;
+BEGIN
+pc_en <= not stall;
 --port maps
-IFstg : IFStage port map (exmem_Branch_Taken_out,exmem_ALU_out,not stall,clk,reset,if_NEXT_PC,if_InstructionValue);
+IFstg : IFStage port map (exmem_Branch_Taken_out,exmem_ALU_out,pc_en,clk,reset,if_NEXT_PC,if_InstructionValue);
 IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out);
 IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl);
 IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,idex_BranchCtrl_out);
