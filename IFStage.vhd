@@ -8,13 +8,14 @@ ENTITY IFStage IS
 -- ONE,TWO,THREE,THREE_OUT,FOUR,FIVE,SEL1,SEL2 are placeholder names
   PORT( 
         SELMUX : IN STD_LOGIC;
-	MUXIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	PCEnable : IN STD_logic;
+	PCClk : IN STD_Logic;
+	PCRESET : IN STD_Logic;
 
+        NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
 
-        ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-        Branch_Taken :  OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-        THREE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-        FIVE_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 END IFStage;
 
 ARCHITECTURE IF_arch OF IFStage IS
@@ -44,9 +45,18 @@ COMPONENT PC is
 	);
 END COMPONENT;
 
-SIGNAL X1 : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL ZEROALU : STD_LOGIC;
+Component InstrMem is
+Port(
+	progCount : IN std_logic_vector (31 downto 0);
+	instrCode : OUT std_logic_vector (31 downto 0)
+	);
+end component;
+
+SIGNAL add4Out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL pcout : STD_LOGIC_VECTOR(31 downto 0);
+signal muxout : STD_Logic_vector (31 downto 0);
+--SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
+--SIGNAL ZEROALU : STD_LOGIC;
 
 --File R/W
 FILE file_input : text;
@@ -56,13 +66,12 @@ SIGNAL input_command : std_logic_vector (command_size-1 downto 0);
 SIGNAL output_command : std_logic_vector(command_size-1 downto 0);
 
 BEGIN
-mux1: mux port map(SEL1,ONE,TWO,X1);
-mux2: mux port map(SEL2,THREE,FOUR,X2);
-ALU1: ALU port map(X1,X2,ALUCtr1,ZEROALU,ALU_OUT);
+fouradder: add4 port map(pcout, add4out);
+pcmux: mux port map(SELMUX,MUXBRANCHIN,add4out,muxout);
+progcount: pc port map(muxout,PCEnable,PCClk,PCReset,pcout);
+InstructionConverter: instrMem port map(pcout, instructionValue);
 
-Branch_Taken <= TWO WHEN (ZEROALU = '1');
-THREE_OUT <= THREE;
-FIVE_OUT <= FIVE;
+next_pc <= muxout
 
 
 END IF_arch;
