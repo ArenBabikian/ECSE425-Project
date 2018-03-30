@@ -6,8 +6,8 @@ PORT( clock : IN STD_LOGIC;
       reset : IN STD_LOGIC;
       IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      MEMWB_IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      rd : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+      data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       reg_en : IN STD_LOGIC;
       IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -24,8 +24,7 @@ END ID;
 
 ARCHITECTURE ID_arch OF ID IS
 
-SIGNAL rs : STD_LOGIC_VECTOR(4 DOWNTO 0);
-SIGNAL rt : STD_LOGIC_VECTOR(4 DOWNTO 0);
+SIGNAL rs , rt , rd : STD_LOGIC_VECTOR(4 DOWNTO 0);
 SIGNAL data : STD_LOGIC_VECTOR(15 DOWNTO 0);
 SIGNAL extCtrl : STD_LOGIC;
 
@@ -64,7 +63,7 @@ data <= IR(15 DOWNTO 0);
 rs <= IR(25 DOWNTO 21);
 rt <= IR(20 DOWNTO 16);
 
-registers1 : REGISTERS port map(clock,rs,rt,rd,MEMWB_IR,reg_en,reset,rs_data,rt_data);
+registers1 : REGISTERS port map(clock,rs,rt,rd,data,reg_en,reset,rs_data,rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl);
 extimm1 : ExtImm port map(data,extCtrl,extendData);
 
