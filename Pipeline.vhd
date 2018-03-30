@@ -113,7 +113,7 @@ architecture behavioral of pipeline is
 		      ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
 		      WriteToReg : OUT STD_LOGIC;
 		      WriteToMem : OUT STD_LOGIC;
-		      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
+		      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
 					readRegister : in std_logic;
 					register_address : in std_logic_vector(4 DOWNTO 0));
 	END component;
