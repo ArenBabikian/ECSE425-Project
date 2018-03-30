@@ -19,7 +19,9 @@ PORT( clock : IN STD_LOGIC;
       ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
       WriteToReg : OUT STD_LOGIC;
       WriteToMem : OUT STD_LOGIC;
-      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
+      BranchCtrl : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+
+    
 END ID;
 
 ARCHITECTURE ID_arch OF ID IS
@@ -60,15 +62,22 @@ END COMPONENT;
 BEGIN
 -- Splitting IR rs, rt and data
 data <= IR(15 DOWNTO 0);
-rs <= IR(25 DOWNTO 21);
 rt <= IR(20 DOWNTO 16);
 rd <= memwb_ir(15 DOWNTO 11);
 -- Port map of the components
-registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,rs_data,rt_data);
+registers1 : REGISTERS port map(clock,readRegister,rt,rd,wb_mux,reg_en,reset,rs_data,rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl);
 extimm1 : ExtImm port map(data,extCtrl,extendData);
 -- Propagating signals through the pipeline
 IR_out <= IR;
 pc_out <= pc_in;
+
+PROCESS(readRegister,register_address)
+  IF(readRegister = '1') THEN
+    rs <= register_address;
+  ELSE
+    rs <= IR(25 DOWNTO 21);
+  END IF;
+END PROCESS:
 
 END ID_arch;
