@@ -47,14 +47,14 @@ BEGIN
       when others => Result <= "00000000000000000000000000000000";
                      Z <= '0';
     END case;
-
+    -- Determines if resulting signal is zero
     if(to_integer(signed(Result)) /= 0) then
       Z <= '1';
     else
       Z <= '0';
     END if;
   END PROCESS;
-
+  -- Outputting
   ALU_Result <= Result;
   Zero <= Z;
 END ARCHITECTURE;
