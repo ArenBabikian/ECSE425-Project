@@ -14,7 +14,7 @@ ENTITY IFStage IS
 	PCRESET : IN STD_Logic;
 
         NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-	InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
+	InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0));
 
 END IFStage;
 
@@ -37,11 +37,11 @@ END COMPONENT;
 
 COMPONENT PC is
   PORT(
-	pc_in : IN STD_LOGIC_VECTOR(32 DOWNTO 0);
+	pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 	enable : IN STD_LOGIC;
 	clock : IN STD_LOGIC;
 	reset : IN STD_LOGIC;
-	pc_out : OUT STD_LOGIC_VECTOR(32 DOWNTO 0)
+	pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
 	);
 END COMPONENT;
 
@@ -62,7 +62,7 @@ pcmux: mux port map(SELMUX,MUXBRANCHIN,add4out,muxout);
 progcount: pc port map(muxout,PCEnable,PCClk,PCReset,pcout);
 InstructionConverter: instrMem port map(pcout, instructionValue);
 
-next_pc <= muxout
+next_pc <= muxout;
 
 
 END IF_arch;
