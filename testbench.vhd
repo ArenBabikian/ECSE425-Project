@@ -68,7 +68,7 @@ test_process: PROCESS
 		reset <= '1';
 		regread <= '0';
 
-		wait for 2*clk_period;
+		wait for 1*clk_period;
 
 		reset <= '0';
 	--read inputs from file line by line and store the content into the instruction memory
@@ -94,7 +94,7 @@ test_process: PROCESS
 	writeInstrData <= "00000000000000000000000000000000";
 	reset <= '1';
 
-	wait for 1.5*clk_period;
+	wait for 1*clk_period;
 	initmem <= '0';
 
 	reset <= '0';

@@ -34,6 +34,8 @@ proc AddWaves {} {
 		add wave -position end sim:/testbench/dut/IDEXbuf/rs_data_out
 		add wave -position end sim:/testbench/dut/EXMEMbuf/ALU_in
 		add wave -position end sim:/testbench/dut/EXMEMbuf/ALU_out
+		add wave -position end sim:/testbench/dut/EXstg/forward_A
+		add wave -position end sim:/testbench/dut/EXstg/forward_B
 }
 
 vlib work
@@ -61,6 +63,8 @@ vcom Pipeline.vhd
 vcom Registers.vhd
 vcom testbench.vhd
 vcom WB.vhd
+vcom mux4to1.vhd
+vcom forwarding.vhd
 
 
 ;# Start simulation
@@ -73,4 +77,4 @@ force -deposit clk 0 1 ns, 1 1 ns -repeat 2 ns
 AddWaves
 
 ;# Run for 20000 ns
-run 20000ns
+run 200ns
