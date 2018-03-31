@@ -13,12 +13,14 @@ END pc;
 ARCHITECTURE pc_arch OF pc is
 BEGIN
 
-pc_proc : PROCESS(clock,reset)
+pc_proc : PROCESS(clock,reset,enable)
 BEGIN
   IF reset = '1' THEN
-    pc_out <= (OTHERS => '0');
-  ELSIF clock'EVENT AND clock = '1' AND enable = '1' THEN
-    pc_out <= pc_in;
+    pc_out <= "00000000000000000000000000000000";
+  ELSIF enable = '1' THEN
+    IF clock'EVENT AND clock = '1' THEN
+      pc_out <= pc_in;
+    END IF;
   END IF;
 END PROCESS pc_proc;
 
