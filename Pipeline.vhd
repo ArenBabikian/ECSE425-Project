@@ -127,6 +127,10 @@ architecture behavioral of pipeline is
 	        IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 	        SEL1 : IN STD_LOGIC;
 	        SEL2 : IN STD_LOGIC;
+	        forward_A : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+	        forward_B : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+	        exmem_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	        memwb_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 	        ALUCtr1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 	        BranchCtrl1: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
 	        ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -158,12 +162,21 @@ architecture behavioral of pipeline is
 					ir_out : out std_logic_vector (31 downto 0));
 	END component;
 
-	--Hazard Detection
+	--Hazard Detection and Forwarding
 	component hazard_detection is
-		PORT( exmem_IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		PORT( idex_IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 	        rs : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 	        rt : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
 	        STALL_REQUEST : OUT STD_LOGIC);
+	end component;
+
+	component forwarding is
+		PORT( exmem_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      rs : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+		      rt : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+		      forward_A : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+		      forward_B : OUT STD_LOGIC_VECTOR(1 DOWNTO 0));
 	end component;
 
 -- Signals connecting the stages and buffers together
@@ -197,6 +210,9 @@ SIGNAL memwb_write_to_reg : STD_LOGIC;
 SIGNAL wb_mux_out, wb_ir_out : std_logic_vector (31 downto 0);
 -- Hazard Detection
 SIGNAL stall : std_logic;
+-- Forwarding
+SIGNAL forwardA , forwardB : STD_LOGIC_VECTOR(1 DOWNTO 0);
+
 BEGIN
 pc_en <= not stall;
 --port maps
@@ -204,13 +220,14 @@ IFstg : IFStage port map (exmem_Branch_Taken_out,exmem_ALU_out,pc_en,clk,reset,w
 IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out);
 IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,registerRead, register_address);
 IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,if_branch_ctrl,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,idex_BranchCtrl_out);
-EXstg : EX port map (idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_BranchCtrl_out,ex_ALU_OUT,ex_Branch_Taken,ex_rt_data_OUT,ex_IR_OUT);
+EXstg : EX port map (idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,forwardA,forwardB,exmem_rt_data_out,memwb_memdata_out,idex_ALUCtr_out,idex_BranchCtrl_out,ex_ALU_OUT,ex_Branch_Taken,ex_rt_data_OUT,ex_IR_OUT);
 EXMEMbuf : EXMEM_buffer port map (clk,ex_Branch_Taken,ex_ALU_OUT,ex_rt_data_OUT,ex_IR_OUT,idex_WriteToReg_out,idex_WriteToMem_out,exmem_WriteToRegOutEXMEM,exmem_WriteToMemOutEXMEM,exmem_Branch_Taken_out,exmem_ALU_out,exmem_rt_data_out,exmem_IR_out);
 MEMstg : MEM port map (clk,exmem_ALU_out,exmem_rt_data_out,exmem_IR_out,exmem_WriteToMemOutEXMEM,mem_MemoryData,mem_AluDataOut,mem_IR_Out,memoryread,address_data);
 MEMWBbuf : MEMWB_buffer port map (clk,mem_MemoryData,mem_AluDataOut, mem_IR_Out,exmem_WriteToRegOutEXMEM,memwb_memdata_out,memwb_aludata_out,memwb_ir_out,memwb_write_to_reg);
 WBstg : WB port map (memwb_memdata_out,memwb_aludata_out, memwb_ir_out,wb_mux_out, wb_ir_out);
 
-hazDet : hazard_detection port map (exmem_IR_out,ifid_ir_out(25 DOWNTO 21),ifid_ir_out(20 DOWNTO 16),stall);
+hazDet : hazard_detection port map (idex_IR_out,ifid_ir_out(25 DOWNTO 21),ifid_ir_out(20 DOWNTO 16),stall);
+forw : forwarding port map(exmem_IR_out,memwb_ir_out,idex_IR_out(25 DOWNTO 21),idex_IR_out(20 DOWNTO 16),forwardA,forwardB);
 
 data <= mem_MemoryData;
 registerData <= if_rs_data;
