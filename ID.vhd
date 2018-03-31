@@ -29,7 +29,7 @@ PORT(
 END ID;
 
 ARCHITECTURE ID_arch OF ID IS
-
+--COMPONENTS AND SIGNALS
 SIGNAL rs , rt , rd : STD_LOGIC_VECTOR(4 DOWNTO 0);
 SIGNAL data : STD_LOGIC_VECTOR(15 DOWNTO 0);
 SIGNAL extCtrl : STD_LOGIC;
@@ -64,11 +64,13 @@ PORT( IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 END COMPONENT;
 
 BEGIN
--- Splitting IR rs, rt and data
+--LOGIC:
+-- Splitting IR (instruction register) into rs, rt and data
 data <= IR(15 DOWNTO 0);
 rt <= IR(20 DOWNTO 16);
 rd <= memwb_ir(15 DOWNTO 11);
--- Port map of the components
+-- Port map of the components. At this point, we notice that the register component is not connected to the other components
+--all three components will become interconnected in the next stage (EX)
 registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,rs_data,rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl);
 extimm1 : ExtImm port map(data,extCtrl,extendData);
@@ -76,6 +78,8 @@ extimm1 : ExtImm port map(data,extCtrl,extendData);
 IR_out <= IR;
 pc_out <= pc_in;
 
+--the process below allows for reading from the registers (used to possibly print out the final contents of the registers 
+--after the completion of a program
 PROCESS(IR,readRegister,register_address)
 BEGIN
   IF(readRegister = '1') THEN

@@ -15,7 +15,7 @@ ENTITY WB IS
 END WB;
 
 ARCHITECTURE WB_arch OF WB IS
-
+--COMPONENTS AND SIGNALS
 COMPONENT mux is
   PORT( SEL : IN STD_LOGIC;
         A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -27,10 +27,10 @@ END COMPONENT;
 signal ind : std_logic;
 
 BEGIN
-
+--LOGIC: 
 --this checks whether the ir contains information for a load or store command.
---in that case, ind becomes 1 and allows the mux to choose the memory input
---over the alu input
+--in that case, ind becomes 1 and allows the mux to choose the input coming from memory
+--over the input coming from the ALU. Otherwise, the mux will choose the ALU input.
 ind <= '1' when (ir_in(31 downto 26) = "101011" or ir_in(31 downto 26) = "100011")
 else '0';
 

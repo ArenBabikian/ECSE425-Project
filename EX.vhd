@@ -23,7 +23,7 @@ ENTITY EX IS
 END EX;
 
 ARCHITECTURE EX_arch OF EX IS
-
+--COMPONENTS AND SIGNALS
 COMPONENT mux is
   PORT( SEL : IN STD_LOGIC;
         A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -63,7 +63,12 @@ SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL ZEROALU : STD_LOGIC;
 
 BEGIN
--- Port map of components
+--LOGIC:
+-- Port map of components.
+--The ALU will have 2 data inputs:
+--1. the program counter or the rs data
+--2. the rt data or the extended (SignExt, ZeroExt) data
+--the branchZero component basically decides whether a branch is needed or not.
 mux1: mux port map(SEL1,pc_in,rs_data,X1);
 mux2: mux port map(SEL2,rt_data,extendData,X2);
 ALU1: ALU port map(X1,X2,ALUCtr1,IR,ZEROALU,ALU_OUT);

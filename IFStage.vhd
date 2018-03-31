@@ -17,7 +17,7 @@ ENTITY IFStage IS
 END IFStage;
 
 ARCHITECTURE IF_arch OF IFStage IS
-
+--COMPONENTS AND SIGNALS
 COMPONENT PC is
   PORT( enable : IN STD_LOGIC;
         clock : IN STD_LOGIC;
@@ -44,6 +44,8 @@ SIGNAL pcout : STD_LOGIC_VECTOR(31 downto 0);
 signal muxout : STD_Logic_vector (31 downto 0);
 
 BEGIN
+--LOGIC:
+-- Port map of components.
 progcount: pc port map(PCEnable,PCClk,PCReset,SELMUX,MUXBRANCHIN,pcout,muxout);
 InstructionConverter: instrMem port map(PCClk,pcout,writeInstrData,initializeMem, instructionValue);
 
