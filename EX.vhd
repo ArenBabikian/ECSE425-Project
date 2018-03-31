@@ -10,10 +10,6 @@ ENTITY EX IS
         IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         SEL1 : IN STD_LOGIC;
         SEL2 : IN STD_LOGIC;
-        forward_A : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-        forward_B : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-        exmem_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        memwb_data : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         ALUCtr1 : IN STD_LOGIC_VECTOR(4 DOWNTO 0);
         BranchCtrl1: IN STD_LOGIC_VECTOR(1 DOWNTO 0);
         ALU_OUT : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -28,15 +24,6 @@ COMPONENT mux is
   PORT( SEL : IN STD_LOGIC;
         A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         B   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        x   : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
-END COMPONENT;
-
-COMPONENT mux4to1 IS
-  PORT( SEL : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
-        A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        B   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        C   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        D   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         x   : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 END COMPONENT;
 
@@ -58,16 +45,15 @@ COMPONENT BranchZero is
     BranchTaken : out STD_LOGIC);
 END COMPONENT;
 
-SIGNAL X1 , X2 , X3 , X4 : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL X1 : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL X2 : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL ZEROALU : STD_LOGIC;
 
 BEGIN
 -- Port map of components
 mux1: mux port map(SEL1,pc_in,rs_data,X1);
 mux2: mux port map(SEL2,rt_data,extendData,X2);
-mux3: mux4to1 port map(forward_A,X1,memwb_data,exmem_data,X1,X3);
-mux4: mux4to1 port map(forward_B,X2,memwb_data,exmem_data,X2,X4);
-ALU1: ALU port map(X3,X4,ALUCtr1,IR,ZEROALU,ALU_OUT);
+ALU1: ALU port map(X1,X2,ALUCtr1,IR,ZEROALU,ALU_OUT);
 BranchZero1: BranchZero port map(rs_data,rt_data,BranchCtrl1,Branch_Taken);
 -- forwarding signals
 rt_data_OUT <= rt_data;
