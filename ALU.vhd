@@ -43,7 +43,7 @@ BEGIN
       when "01101" => Result <= to_STDLOGICVECTOR(to_bitvector(Data1) sra to_integer(signed(Data2))); -- SRA
       when "01110" => Result <= Data2(15 DOWNTO 0) & std_logic_vector(to_unsigned(0, 16)); --LUI
       when "01111" => Result <= STD_LOGIC_VECTOR(unsigned(Data1) + unsigned(Data2(15 DOWNTO 0)) * 4);   --BEQ & BNE
-      when "10000" => Result <= Data1(31 DOWNTO 28) & IR(25 DOWNTO 0) & "00"; -- J & JAL
+      when "10000" => Result <= "000000" & IR(25 DOWNTO 0); -- J & JAL
       when others => Result <= "00000000000000000000000000000000";
                      Z <= '0';
     END case;

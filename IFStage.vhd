@@ -24,7 +24,9 @@ COMPONENT PC is
         reset : IN STD_LOGIC;
         pc_sel: IN STD_logic;
         jump_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
+        pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        next_pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
+);
 END COMPONENT;
 
 Component InstrMem is
@@ -42,10 +44,10 @@ SIGNAL pcout : STD_LOGIC_VECTOR(31 downto 0);
 signal muxout : STD_Logic_vector (31 downto 0);
 
 BEGIN
-progcount: pc port map(PCEnable,PCClk,PCReset,SELMUX,MUXBRANCHIN,pcout);
+progcount: pc port map(PCEnable,PCClk,PCReset,SELMUX,MUXBRANCHIN,pcout,muxout);
 InstructionConverter: instrMem port map(PCClk,pcout,writeInstrData,initializeMem, instructionValue);
 
-next_pc <= muxout;
+next_pc <= pcout;
 
 
 END IF_arch;

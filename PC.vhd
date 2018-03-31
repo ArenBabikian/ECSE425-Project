@@ -10,7 +10,8 @@ PORT( enable : IN STD_LOGIC;
       reset : IN STD_LOGIC;
       pc_sel: IN STD_logic;
       jump_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
+      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      next_pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 END pc;
 
 ARCHITECTURE pc_arch OF pc is
@@ -30,6 +31,13 @@ BEGIN
     END IF;
     END IF;
   END IF;
+
+  IF(pc_sel = '0') THEN
+    next_pc_out <= std_logic_vector(to_unsigned(to_integer(unsigned(pc_count)) + 4, 32)) ;
+  ELSE
+    next_pc_out <= jump_in;
+  END IF;
+
 END PROCESS pc_proc;
 
 pc_out <= pc_count;

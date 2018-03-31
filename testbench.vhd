@@ -66,6 +66,7 @@ test_process: PROCESS
 	BEGIN
 		report "report1";
 		reset <= '1';
+		regread <= '0';
 
 		wait for 2*clk_period;
 
@@ -90,11 +91,11 @@ test_process: PROCESS
     file_close(file_input);
 
 	report "initialization done";
-	initmem <= '0';
 	writeInstrData <= "00000000000000000000000000000000";
 	reset <= '1';
 
-	wait for 2*clk_period;
+	wait for 1.5*clk_period;
+	initmem <= '0';
 
 	reset <= '0';
 

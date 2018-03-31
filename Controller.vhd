@@ -111,7 +111,9 @@ ARCHITECTURE Controller_arch of Controller IS
             Reg2Sel <= '1'; --Select Immediate as Data
             WriteToReg <= '1'; --Function requires writing to a register
             WriteToMem <= '0'; --Function doesn't require writing to memory
+            BranchCtrl <= "11";--Make sure that branch is never taken
           WHEN "001010" => -- SLTI
+            BranchCtrl <= "11";--Make sure that branch is never taken
             SignExtSel <= '0'; --Sign Extend the signal
             AluCtr <= "00100";
             Reg1Sel <= '1'; --Select Rs Data
@@ -119,6 +121,7 @@ ARCHITECTURE Controller_arch of Controller IS
             WriteToReg <= '1'; --Function requires writing to a register
             WriteToMem <= '0'; --Function doesn't require writing to memory
           WHEN "001100" => -- ANDI
+            BranchCtrl <= "11";--Make sure that branch is never taken
             SignExtSel <= '0'; --Zero Extend the signal
             AluCtr <= "00101";
             Reg1Sel <= '1'; --Select Rs Data
@@ -127,6 +130,7 @@ ARCHITECTURE Controller_arch of Controller IS
             WriteToMem <= '0'; --Function doesn't require writing to memory
           WHEN "001101" => --ORI
             SignExtSel <= '0'; --Zero Extend the signal
+            BranchCtrl <= "11";--Make sure that branch is never taken
             AluCtr <= "00110";
             Reg1Sel <= '1'; --Select Rs Data
             Reg2Sel <= '1'; --Select Immediate as Data
@@ -134,6 +138,7 @@ ARCHITECTURE Controller_arch of Controller IS
             WriteToMem <= '0'; --Function doesn't require writing to memory
           WHEN "001110" => --XORI
             SignExtSel <= '0'; --Zero Extend the signal
+            BranchCtrl <= "11";--Make sure that branch is never taken
             AluCtr <= "01000";
             Reg1Sel <= '1'; --Select Rs Data
             Reg2Sel <= '1'; --Select Immediate as Data
@@ -141,6 +146,7 @@ ARCHITECTURE Controller_arch of Controller IS
             WriteToMem <= '0'; --Function doesn't require writing to memory
           WHEN "001111" => --LUI
             SignExtSel <= '0'; --Zero Extend the signal
+            BranchCtrl <= "11";--Make sure that branch is never taken
             AluCtr <= "01110";
             Reg1Sel <= '1'; --Select Rs Data
             Reg2Sel <= '1'; --Select Immediate as Data
@@ -148,6 +154,7 @@ ARCHITECTURE Controller_arch of Controller IS
             WriteToMem <= '0'; --Function doesn't require writing to memory
           WHEN "100011" => --LW
             SignExtSel <= '0'; --Sign Extend the signal
+            BranchCtrl <= "11";--Make sure that branch is never taken
             AluCtr <= "00000";
             Reg1Sel <= '1'; --Select Rs Data
             Reg2Sel <= '1'; --Select Immediate as Data
@@ -155,6 +162,7 @@ ARCHITECTURE Controller_arch of Controller IS
             WriteToMem <= '0'; --Function doesn't require writing to memory
           WHEN "101011" => --SW
             SignExtSel <= '0'; --Sign Extend the signal
+            BranchCtrl <= "11";--Make sure that branch is never taken
             AluCtr <= "00000";
             Reg1Sel <= '1'; --Select Rs Data
             Reg2Sel <= '1'; --Select Immediate as Data

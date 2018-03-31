@@ -46,5 +46,5 @@ mem1: memory port map(clock,WriteDataMem,memAddress,mem_en,MemoryData, OPEN);
 		end if;
 	IR_Out <= IR;
   END PROCESS;
-
+	AluDataOut <= AluData;
 END MEM_arch;

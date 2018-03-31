@@ -25,7 +25,7 @@ PORT(
 	register_address : in std_logic_vector(4 DOWNTO 0)
 );
 
-    
+
 END ID;
 
 ARCHITECTURE ID_arch OF ID IS
@@ -76,7 +76,7 @@ extimm1 : ExtImm port map(data,extCtrl,extendData);
 IR_out <= IR;
 pc_out <= pc_in;
 
-PROCESS(readRegister,register_address)
+PROCESS(IR,readRegister,register_address)
 BEGIN
   IF(readRegister = '1') THEN
     rs <= register_address;

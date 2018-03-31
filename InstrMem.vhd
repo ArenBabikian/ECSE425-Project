@@ -33,7 +33,11 @@ mem1: memory port map(clock,WriteDataMem,progCount_int,initializeMem,data, OPEN)
 
   PROCESS(progCount,initializeMem)
 	BEGIN
-		progCount_int <= to_integer(unsigned(progCount));
+		if((unsigned(progCount) < 32768)) then
+			progCount_int <= to_integer(unsigned(progCount));
+		else
+			progCount_int <= 32767;
+		END IF;
 		IF(initializeMem = '0') THEN
 			instrCode <= data;
 		ELSE
