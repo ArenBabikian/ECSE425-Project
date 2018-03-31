@@ -30,7 +30,7 @@ ARCHITECTURE Behavioral OF Registers is
     BEGIN
 
     IF(reset = '1') THEN
-      registers_array <= (OTHERS => STD_LOGIC_VECTOR(TO_UNSIGNED(0, 32)));
+      --registers_array <= (OTHERS => STD_LOGIC_VECTOR(TO_UNSIGNED(0, 32)));
     ELSIF(clock'event) THEN
       rs_data <= registers_array(TO_INTEGER(UNSIGNED(rs)));
       rt_data <= registers_array(TO_INTEGER(UNSIGNED(rt)));

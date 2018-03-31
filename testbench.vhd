@@ -36,7 +36,7 @@ SIGNAL input_command : STD_LOGIC_VECTOR (31 downto 0);
 SIGNAL reg_content : STD_LOGIC_VECTOR (31 downto 0);
 SIGNAL ram_content : STD_LOGIC_VECTOR (31 downto 0);
 
-CONSTANT clk_period : time := 1 ns;
+CONSTANT clk_period : time := 2 ns;
 
 BEGIN
 dut: pipeline
@@ -50,9 +50,9 @@ BEGIN
 	clk <= '1';
 	WAIT FOR clk_period/2;
 END PROCESS;
- 
 
-test_process: PROCESS   
+
+test_process: PROCESS
 	--variables needed for read and write operations
 
 	VARIABLE input_line : line;
@@ -60,11 +60,16 @@ test_process: PROCESS
 	VARIABLE ram_line : line;
     VARIABLE input_cmd : std_logic_vector(31 downto 0);
     VARIABLE reg_content_var : std_logic_vector(31 downto 0);
-    VARIABLE ram_content_var : std_logic_vector(31 downto 0);	
+    VARIABLE ram_content_var : std_logic_vector(31 downto 0);
 	variable ind : integer := 0;
 
 	BEGIN
 		report "report1";
+		reset <= '1';
+
+		wait for 2*clk_period;
+
+		reset <= '0';
 	--read inputs from file line by line and store the content into the instruction memory
 	--setting initmem to 1 allows to write to the intruction memory
 	initMem <= '1';
@@ -74,71 +79,71 @@ test_process: PROCESS
 		report "initialization step";
         readline(file_input, input_line);
         read(input_line, input_cmd);
-		
+
 		writeInstrData <= input_cmd;
-		
+
 		wait for 1 * clk_period;
 		--at every clock cycle, the PC is incremented by 4, thus every time we
 		--write something to memory, we writ it in the following position
 
     end loop;
     file_close(file_input);
-	
+
 	report "initialization done";
 	initmem <= '0';
 	writeInstrData <= "00000000000000000000000000000000";
 	reset <= '1';
-	
-	wait for clk_period;
-	
---	reset <= '0';
-	
+
+	wait for 2*clk_period;
+
+	reset <= '0';
+
 	wait for 10000 * clk_period;
-		
-	
+
+
 	report "waiting done";
 	--go through the registers array and print its content to a file
 	--note that there are 32 registers
 	regread <= '1';
 	file_open(file_output_reg, "register_file.txt", write_mode);
-	while ind < 32 loop	
+	while ind < 32 loop
 
 		reg_addr <= std_logic_vector(to_unsigned(ind, reg_addr'length));
 		WAIT FOR  1 * clk_period;
-		
-		reg_content_var := regdata; 
+
+		reg_content_var := regdata;
 		write(reg_line, reg_content_var);
-		writeline(file_output_reg, reg_line);		
+		writeline(file_output_reg, reg_line);
 		ind := ind +1;
 	end loop;
 	file_close(file_output_reg);
-	
+
 	regread <= '0';
 	reg_addr <= "00000";
 
 	report "writing registers done";
-	
+
 	--go through the data memory array and print its content to a file
 	--note that there are 32768
 	ind := 0;
 	memread <= '1';
 	file_open(file_output_ram, "memory.txt", write_mode);
-	while ind < 32767 loop	
-	
+	while ind < 32767 loop
+
 		addr_data <= std_logic_vector(to_unsigned(ind, addr_data'length));
 		WAIT FOR  1 * clk_period;
-		
-		
+
+
 		ram_content_var := data;
 		write(ram_line, ram_content_var);
-		writeline(file_output_ram, ram_line);		
+		writeline(file_output_ram, ram_line);
 		ind := ind +4;
 	end loop;
 	file_close(file_output_ram);
-	
+
 	memread <= '0';
 	data <= "00000000000000000000000000000000";
-	
+
 	report "writing memory done";
 	WAIT;
 END PROCESS test_process;

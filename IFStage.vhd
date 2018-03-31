@@ -18,29 +18,13 @@ END IFStage;
 
 ARCHITECTURE IF_arch OF IFStage IS
 
-COMPONENT mux is
-  PORT( SEL : IN STD_LOGIC;
-        A   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        B   : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        x   : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
-	);
-END COMPONENT;
-
-COMPONENT add4 is
-  PORT(
-	A : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-	X : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
-	);
-END COMPONENT;
-
 COMPONENT PC is
-  PORT(
-	pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-	enable : IN STD_LOGIC;
-	clock : IN STD_LOGIC;
-	reset : IN STD_LOGIC;
-	pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
-	);
+  PORT( enable : IN STD_LOGIC;
+        clock : IN STD_LOGIC;
+        reset : IN STD_LOGIC;
+        pc_sel: IN STD_logic;
+        jump_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 END COMPONENT;
 
 Component InstrMem is
@@ -58,9 +42,7 @@ SIGNAL pcout : STD_LOGIC_VECTOR(31 downto 0);
 signal muxout : STD_Logic_vector (31 downto 0);
 
 BEGIN
-fouradder: add4 port map(pcout, add4out);
-pcmux: mux port map(SELMUX,MUXBRANCHIN,add4out,muxout);
-progcount: pc port map(muxout,PCEnable,PCClk,PCReset,pcout);
+progcount: pc port map(PCEnable,PCClk,PCReset,SELMUX,MUXBRANCHIN,pcout);
 InstructionConverter: instrMem port map(PCClk,pcout,writeInstrData,initializeMem, instructionValue);
 
 next_pc <= muxout;

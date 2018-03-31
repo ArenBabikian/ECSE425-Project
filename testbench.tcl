@@ -1,17 +1,17 @@
 proc AddWaves {} {
 	;#Add waves we're interested in to the Wave window
     add wave -position end sim:/testbench/clk
+		add wave -position end sim:/testbench/dut/IDstg/controller1/IR
     add wave -position end sim:/testbench/reset
-    add wave -position end sim:/testbench/initializeMem
-    add wave -position end sim:/testbench/writeInstrData
-    add wave -position end sim:/testbench/memoryread
-    add wave -position end sim:/testbench/address_data
+    add wave -position end sim:/testbench/dut/IFstg/PCEnable
+    add wave -position end sim:/testbench/dut/IFstg/InstructionValue
+    add wave -position end sim:/testbench/dut/IFstg/pcout
+    add wave -position end sim:/testbench/dut/IFstg/PCClk
     add wave -position end sim:/testbench/data
-    add wave -position end sim:/testbench/s_op2
-    add wave -position end sim:/testbench/s_op3
-    add wave -position end sim:/testbench/s_op4
-    add wave -position end sim:/testbench/s_op5
-    add wave -position end sim:/testbench/s_final_output
+    add wave -position end sim:/testbench/dut/IDstg/controller1/AluCtr
+		add wave -position end sim:/testbench/dut/IFIDbuf/stall_request
+
+
 }
 
 vlib work
@@ -45,10 +45,10 @@ vcom WB.vhd
 vsim testbench
 
 ;# Generate a clock with 1ns period
-force -deposit clk 0 0 ns, 1 0.5 ns -repeat 1 ns
+force -deposit clk 0 1 ns, 1 1 ns -repeat 2 ns
 
-#;# Add the waves
-#AddWaves
+;# Add the waves
+AddWaves
 
 ;# Run for 20000 ns
-run 20000ns
+run 200ns
