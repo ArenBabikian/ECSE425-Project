@@ -26,7 +26,8 @@ architecture behavioral of pipeline is
 		      stall_request : IN STD_LOGIC;
 		      IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
+		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      flush : IN STD_LOGIC_VECTOR(31 DOWNTO 0));
 	END component;
 
 	Component IDEX_buffer is
@@ -204,6 +205,7 @@ SIGNAL if_NEXT_PC , if_InstructionValue : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL pc_en : STD_LOGIC;
 -- IF/ID buffer
 SIGNAL ifid_ir_out, ifid_pc_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL ifid_flush : STD_LOGIC;
 -- ID stage
 SIGNAL if_ir_out , if_pc_out , if_rs_data , if_rt_data , if_extend_data : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL if_ALU_ctrl : STD_LOGIC_VECTOR(4 DOWNTO 0);
@@ -249,7 +251,7 @@ pc_en <= not stall AND pc_enable;
 not_Sel_1 <= not idex_SEL1_out;
 --port maps
 IFstg : IFStage port map (btaken,bdest,pc_en,clk,reset,writeInstrData,initializeMem,if_NEXT_PC,if_InstructionValue,stall);
-IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out);
+IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out,ifid_flush);
 IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,registerRead, register_address,ir_typeWB_out,ir_typeID_out,btaken,bdest);
 IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,ir_typeID_out,ir_typeIDEX_out);
 EXstg : EX port map (idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,not_Sel_1,idex_SEL2_out,forwardA,forwardB,forwardC,exmem_ALU_out,memStageData,idex_ALUCtr_out,ex_ALU_OUT,ex_rt_data_OUT,ex_IR_OUT,ir_typeIDEX_out,ir_typeEX_out,exmem_ALU_out,mem_AluDataOut);

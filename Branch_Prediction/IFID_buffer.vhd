@@ -7,7 +7,9 @@ PORT( clock : IN STD_LOGIC;
       stall_request : IN STD_LOGIC;
       IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
+      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+      flush : IN STD_LOGIC_VECTOR(31 DOWNTO 0));
+
 END ifid_buffer;
 
 ARCHITECTURE ifid_buffer_arch OF ifid_buffer IS
@@ -16,7 +18,7 @@ TYPE stallState IS (notStalled,stalled, stallBuffer);
 SIGNAL state : stallState := notStalled;
 BEGIN
 -- if a stall is requested, instruction is add $r0, $r0, $r0
-tmpIR <= "00000000000000000000000000100000" WHEN (stall_request = '1') ELSE IR;
+tmpIR <= "00000000000000000000000000100000" WHEN (stall_request = '1' OR flush = '1') ELSE IR;
 PROCESS(clock,stall_request)
 BEGIN
 -- Propagating signals through the pipeline
@@ -51,5 +53,5 @@ BEGIN
         state <= notStalled;
     END CASE;
 END PROCESS;
-IR_out <= IR WHEN state = notStalled else "00000000000000000000000000100000";
+IR_out <= IR WHEN state = notStalled AND flush = '0' else "00000000000000000000000000100000";
 END ifid_buffer_arch;
