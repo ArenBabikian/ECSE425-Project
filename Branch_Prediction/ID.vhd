@@ -74,10 +74,13 @@ END COMPONENT;
 
 COMPONENT BranchZero is
   PORT(
+		clock : in std_logic;
     rs_data: in STD_LOGIC_VECTOR (31 downto 0);
     rt_data: in STD_LOGIC_VECTOR (31 downto 0);
     branchCtrl : in STD_LOGIC_VECTOR(1 downto 0);
-    BranchTaken : out STD_LOGIC
+		prediction : in std_logic;
+    BranchTaken : out STD_LOGIC;
+		flush_r : out std_logic
   );
 END COMPONENT;
 
@@ -98,7 +101,7 @@ rt <= IR(20 DOWNTO 16);
 registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,s_rs_data,s_rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl,IRTypeID_out);
 extimm1 : ExtImm port map(data,extCtrl,s_extendData);
-branchzero1 : BranchZero port map(s_rs_data,s_rt_data,BranchCtrl,s_btaken);
+branchzero1 : BranchZero port map(clock,s_rs_data,s_rt_data,BranchCtrl,s_btaken,s_flush_request);
 bdest1 : branch_destination port map(clock,BranchCtrl,s_extendData,pc_in,IR,s_bdestination);
 
 -- Propagating signals through the pipeline
@@ -108,16 +111,6 @@ rs_data <= s_rs_data;
 rt_data <= s_rt_data;
 extendData <= s_extendData;
 bdestination <= pc_in WHEN(prediction = '1' and s_btaken = '0') else s_bdestination;
-PROCESS(clock,s_btaken)
-BEGIN
-	IF(rising_edge(s_btaken) AND clock = '1') then
-		IF(prediction = s_btaken) THEN
-			s_flush_request <= '0';
-		ELSE
-			s_flush_request <= '1';
-		END IF;
-	END IF;
-END PROCESS;
 flush_request <= s_flush_request;
 PROCESS(IR,readRegister,register_address,memwb_ir)
 BEGIN

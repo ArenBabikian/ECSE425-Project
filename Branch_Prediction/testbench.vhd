@@ -80,7 +80,7 @@ test_process: PROCESS
 
 
 
-	file_open(file_input, "program.txt", read_mode);
+	file_open(file_input, "testcase1.txt", read_mode);
 		report "report2";
     while not endfile(file_input) loop
 		report "initialization step";
