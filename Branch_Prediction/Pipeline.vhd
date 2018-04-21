@@ -107,7 +107,7 @@ architecture behavioral of pipeline is
 
 	Component ID is
 		PORT(
-		clk : IN STD_LOGIC;
+		clock : IN STD_LOGIC;
 	    reset : IN STD_LOGIC;
 	    IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 	    pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
