@@ -24,8 +24,9 @@ PORT(
 	register_address : in std_logic_vector(4 DOWNTO 0);
 	IRTypeID_in : in INTEGER;
 	IRTypeID_out : out INTEGER;
-	btaken : out STD_LOGIC;
-	bdestination : out STD_LOGIC_VECTOR(31 DOWNTO 0)
+	bdestination : out STD_LOGIC_VECTOR(31 DOWNTO 0);
+	prediction : in std_logic;
+	flush_request : out std_logic
 );
 
 
@@ -34,10 +35,10 @@ END ID;
 ARCHITECTURE ID_arch OF ID IS
 
 SIGNAL rs , rt , rd : STD_LOGIC_VECTOR(4 DOWNTO 0);
-SIGNAL s_rs_data, s_rt_data, s_extendData : STD_LOGIC_VECTOR(31 DOWNTO 0);
+SIGNAL s_rs_data, s_rt_data, s_extendData, s_bdestination : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL BranchCtrl : STD_LOGIC_VECTOR(1 DOWNTO 0);
 SIGNAL data : STD_LOGIC_VECTOR(15 DOWNTO 0);
-SIGNAL extCtrl : STD_LOGIC;
+SIGNAL extCtrl , s_btaken : STD_LOGIC;
 
 COMPONENT REGISTERS IS
   PORT( clock : in STD_LOGIC;
@@ -95,8 +96,8 @@ rt <= IR(20 DOWNTO 16);
 registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,s_rs_data,s_rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl,IRTypeID_out);
 extimm1 : ExtImm port map(data,extCtrl,s_extendData);
-branchzero1 : BranchZero port map(s_rs_data,s_rt_data,BranchCtrl,btaken);
-bdest1 : branch_destination port map(BranchCtrl,s_extendData,pc_in,IR,bdestination);
+branchzero1 : BranchZero port map(s_rs_data,s_rt_data,BranchCtrl,s_btaken);
+bdest1 : branch_destination port map(BranchCtrl,s_extendData,pc_in,IR,s_bdestination);
 
 -- Propagating signals through the pipeline
 IR_out <= IR;
@@ -104,6 +105,8 @@ pc_out <= pc_in;
 rs_data <= s_rs_data;
 rt_data <= s_rt_data;
 extendData <= s_extendData;
+flush_request <= '0' WHEN(prediction = s_btaken) ELSE '1';
+bdestination <= pc_in WHEN(prediction = '1' and s_btaken = '0') else s_bdestination;
 
 PROCESS(IR,readRegister,register_address,memwb_ir)
 BEGIN

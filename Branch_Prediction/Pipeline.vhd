@@ -25,9 +25,11 @@ architecture behavioral of pipeline is
 		      pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      stall_request : IN STD_LOGIC;
 		      IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+		      prediction_in : IN STD_LOGIC;
+		      prediction_out : OUT std_logic;
 		      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		      IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		      flush : IN STD_LOGIC_VECTOR(31 DOWNTO 0));
+		      flush : IN STD_LOGIC);
 	END component;
 
 	Component IDEX_buffer is
@@ -91,42 +93,44 @@ architecture behavioral of pipeline is
 	--STAGE COMPONENTS
 	Component IFStage is
 		 PORT( SELMUX : IN STD_LOGIC;
-      	MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      	PCEnable : IN STD_logic;
-      	PCClk : IN STD_Logic;
-      	PCRESET : IN STD_Logic;
-        writeInstrData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-        initializeMem : IN STD_LOGIC;
-        NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-	      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
-        stall : IN STD_Logic);
+	       	MUXBRANCHIN : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	       	PCEnable : IN STD_logic;
+	       	PCClk : IN STD_Logic;
+	       	PCRESET : IN STD_Logic;
+	         writeInstrData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	         initializeMem : IN STD_LOGIC;
+	         NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	 	      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
+	         stall : IN STD_Logic;
+	         predict : OUT std_logic);
 	END component;
 
 	Component ID is
 		PORT(
-			clock : IN STD_LOGIC;
-		    reset : IN STD_LOGIC;
-		    IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    wb_mux : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    reg_en : IN STD_LOGIC;
-		    IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    rs_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    rt_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    extendData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		    SEL1 : OUT STD_LOGIC;
-		    SEL2 : OUT STD_LOGIC;
-		    ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
-		    WriteToReg : OUT STD_LOGIC;
-		    WriteToMem : OUT STD_LOGIC;
-			readRegister : in std_logic;
-			register_address : in std_logic_vector(4 DOWNTO 0);
-			IRTypeID_in : in INTEGER;
-			IRTypeID_out : out INTEGER;
-			btaken : out STD_LOGIC;
-			bdestination : out STD_LOGIC_VECTOR(31 DOWNTO 0)
+		clock : IN STD_LOGIC;
+	    reset : IN STD_LOGIC;
+	    IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    wb_mux : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    memwb_ir : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    reg_en : IN STD_LOGIC;
+	    IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    rs_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    rt_data : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    extendData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+	    SEL1 : OUT STD_LOGIC;
+	    SEL2 : OUT STD_LOGIC;
+	    ALUCtr : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
+	    WriteToReg : OUT STD_LOGIC;
+	    WriteToMem : OUT STD_LOGIC;
+		readRegister : in std_logic;
+		register_address : in std_logic_vector(4 DOWNTO 0);
+		IRTypeID_in : in INTEGER;
+		IRTypeID_out : out INTEGER;
+		bdestination : out STD_LOGIC_VECTOR(31 DOWNTO 0);
+		prediction : in std_logic;
+		flush_request : out std_logic
 		);
 	END component;
 
@@ -202,14 +206,14 @@ architecture behavioral of pipeline is
 -- Signals connecting the stages and buffers together
 -- IF stage
 SIGNAL if_NEXT_PC , if_InstructionValue : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL pc_en : STD_LOGIC;
+SIGNAL pc_en,s_predict : STD_LOGIC;
 -- IF/ID buffer
 SIGNAL ifid_ir_out, ifid_pc_out : STD_LOGIC_VECTOR(31 DOWNTO 0);
-SIGNAL ifid_flush : STD_LOGIC;
+SIGNAL idif_predict : STD_LOGIC;
 -- ID stage
 SIGNAL if_ir_out , if_pc_out , if_rs_data , if_rt_data , if_extend_data : STD_LOGIC_VECTOR(31 DOWNTO 0);
 SIGNAL if_ALU_ctrl : STD_LOGIC_VECTOR(4 DOWNTO 0);
-SIGNAL if_sel1 , if_sel2 , if_write_to_reg , if_write_to_mem, btaken : STD_LOGIC;
+SIGNAL if_sel1 , if_sel2 , if_write_to_reg , if_write_to_mem, flush : STD_LOGIC;
 SIGNAL ir_typeID_out : INTEGER;
 -- ID/EX buffer
 SIGNAL idex_pc_out , idex_rs_data_out , idex_rt_data_out , idex_extendData_out , idex_IR_out, bdest : STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -250,9 +254,9 @@ BEGIN
 pc_en <= not stall AND pc_enable;
 not_Sel_1 <= not idex_SEL1_out;
 --port maps
-IFstg : IFStage port map (btaken,bdest,pc_en,clk,reset,writeInstrData,initializeMem,if_NEXT_PC,if_InstructionValue,stall);
-IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,ifid_pc_out,ifid_ir_out,ifid_flush);
-IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,registerRead, register_address,ir_typeWB_out,ir_typeID_out,btaken,bdest);
+IFstg : IFStage port map (flush,bdest,pc_en,clk,reset,writeInstrData,initializeMem,if_NEXT_PC,if_InstructionValue,stall,s_predict);
+IFIDbuf : IFID_Buffer port map (clk,if_NEXT_PC,stall,if_InstructionValue,s_predict,idif_predict,ifid_pc_out,ifid_ir_out,flush);
+IDstg : ID port map (clk,reset,ifid_ir_out,ifid_pc_out,wb_mux_out,wb_ir_out,memwb_write_to_reg,if_ir_out,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,registerRead, register_address,ir_typeWB_out,ir_typeID_out,bdest,idif_predict,flush);
 IDEXbuf : IDEX_buffer port map (clk,if_pc_out,if_rs_data,if_rt_data,if_extend_data,if_ir_out,if_sel1,if_sel2,if_ALU_ctrl,if_write_to_reg,if_write_to_mem,idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,idex_SEL1_out,idex_SEL2_out,idex_ALUCtr_out,idex_WriteToReg_out,idex_WriteToMem_out,ir_typeID_out,ir_typeIDEX_out);
 EXstg : EX port map (idex_pc_out,idex_rs_data_out,idex_rt_data_out,idex_extendData_out,idex_IR_out,not_Sel_1,idex_SEL2_out,forwardA,forwardB,forwardC,exmem_ALU_out,memStageData,idex_ALUCtr_out,ex_ALU_OUT,ex_rt_data_OUT,ex_IR_OUT,ir_typeIDEX_out,ir_typeEX_out,exmem_ALU_out,mem_AluDataOut);
 EXMEMbuf : EXMEM_buffer port map (clk,ex_ALU_OUT,ex_rt_data_OUT,ex_IR_OUT,idex_WriteToReg_out,idex_WriteToMem_out,exmem_WriteToRegOutEXMEM,exmem_WriteToMemOutEXMEM,exmem_ALU_out,exmem_rt_data_out,exmem_IR_out,ir_typeEX_out,ir_typeEXMEM_out);

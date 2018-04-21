@@ -6,9 +6,11 @@ PORT( clock : IN STD_LOGIC;
       pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
       stall_request : IN STD_LOGIC;
       IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+      prediction_in : IN STD_LOGIC;
+      prediction_out : OUT std_logic;
       pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
       IR_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      flush : IN STD_LOGIC_VECTOR(31 DOWNTO 0));
+      flush : IN STD_LOGIC);
 
 END ifid_buffer;
 
@@ -54,4 +56,5 @@ BEGIN
     END CASE;
 END PROCESS;
 IR_out <= IR WHEN state = notStalled AND flush = '0' else "00000000000000000000000000100000";
+prediction_out <= prediction_in;
 END ifid_buffer_arch;

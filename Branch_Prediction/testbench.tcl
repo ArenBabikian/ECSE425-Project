@@ -30,7 +30,7 @@ proc AddWaves {} {
 	add wave -position end sim:/testbench/dut/IDstg/bdest1/IR
 	add wave -position end sim:/testbench/dut/IDstg/bdest1/b_dest
 
-	;#add log -r sim:/testbench/dut/*
+	add log -r sim:/testbench/dut/*
 
 
 

@@ -124,14 +124,7 @@ BEGIN
 
   op2_hazard <= '1' when op2_addr /= "00000" AND (op2_addr = write1 AND instruction1(31 DOWNTO 0) = "100011") else '0';
 
-  branch_hazard <= '1' when instruction1_type = 2 or instruction1(31 DOWNTO 26) = "000100" or instruction1(31 DOWNTO 26) = "000101" --or
-                          --  instruction2_type = 2 or instruction2(31 DOWNTO 26) = "000100" or instruction2(31 DOWNTO 26) = "000101" or
-                          --  instruction3_type = 2 or instruction3(31 DOWNTO 26) = "000100" or instruction3(31 DOWNTO 26) = "000101"or
-                          --  instruction4_type = 2 or instruction4(31 DOWNTO 26) = "000100" or instruction4(31 DOWNTO 26) = "000101"
-                            else '0';
-
-
-  STALL_REQUEST <= op1_hazard or op2_hazard or branch_hazard;
+  STALL_REQUEST <= op1_hazard or op2_hazard;
   PROCESS(clock)
     BEGIN
     IF(clock'event AND clock = '1') THEN

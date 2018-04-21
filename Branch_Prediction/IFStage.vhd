@@ -14,20 +14,23 @@ ENTITY IFStage IS
         initializeMem : IN STD_LOGIC;
         NEXT_PC : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 	      InstructionValue : OUT STD_LOGIC_VECTOR(31 downto 0);
-        stall : IN STD_Logic);
+        stall : IN STD_Logic;
+        predict : OUT std_logic);
 END IFStage;
 
 ARCHITECTURE IF_arch OF IFStage IS
 
 COMPONENT PC is
   PORT( enable : IN STD_LOGIC;
-      clock : IN STD_LOGIC;
-      reset : IN STD_LOGIC;
-      pc_sel: IN STD_logic;
-      jump_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-      pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      next_pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-      stall : IN STD_LOGIC);
+        clock : IN STD_LOGIC;
+        reset : IN STD_LOGIC;
+        pc_sel: IN STD_logic;
+        jump_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        next_pc_out : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        prediction : OUT std_logic;
+        stall : IN STD_LOGIC);
 END COMPONENT;
 
 Component InstrMem is
@@ -46,7 +49,7 @@ SIGNAL irout : STD_LOGIC_VECTOR(31 DOWNTO 0);
 signal muxout : STD_Logic_vector (31 downto 0);
 
 BEGIN
-progcount: pc port map(PCEnable,PCClk,PCReset,SELMUX,MUXBRANCHIN,pcout,muxout,stall);
+progcount: pc port map(PCEnable,PCClk,PCReset,SELMUX,MUXBRANCHIN,irout,pcout,muxout,predict,stall);
 InstructionConverter: instrMem port map(PCClk,pcout,writeInstrData,initializeMem, irout);
 InstructionValue <= irout;
 next_pc <= muxout;
