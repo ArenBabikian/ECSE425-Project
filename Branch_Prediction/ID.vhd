@@ -3,7 +3,7 @@ USE IEEE.STD_LOGIC_1164.ALL;
 -- Instruction Decode stage
 ENTITY ID IS
 PORT(
-	clock : IN STD_LOGIC;
+	clk : IN STD_LOGIC;
     reset : IN STD_LOGIC;
     IR : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
     pc_in : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -39,9 +39,10 @@ SIGNAL s_rs_data, s_rt_data, s_extendData, s_bdestination : STD_LOGIC_VECTOR(31 
 SIGNAL BranchCtrl : STD_LOGIC_VECTOR(1 DOWNTO 0);
 SIGNAL data : STD_LOGIC_VECTOR(15 DOWNTO 0);
 SIGNAL extCtrl , s_btaken : STD_LOGIC;
+SIGNAL s_flush_request : STD_LOGIC := '0';
 
 COMPONENT REGISTERS IS
-  PORT( clock : in STD_LOGIC;
+  PORT( clk : in STD_LOGIC;
   rs : in STD_LOGIC_VECTOR (4 DOWNTO 0);
   rt : in STD_LOGIC_VECTOR (4 DOWNTO 0);
   rd : in  STD_LOGIC_VECTOR (4 DOWNTO 0);
@@ -81,7 +82,8 @@ COMPONENT BranchZero is
 END COMPONENT;
 
 component branch_destination is
-PORT( branchCtrl : IN std_logic_vector(1 DOWNTO 0);
+PORT( clk : IN std_logic;
+			branchCtrl : IN std_logic_vector(1 DOWNTO 0);
       extendData : IN std_logic_vector(31 DOWNTO 0);
       pc_in : IN std_logic_vector(31 DOWNTO 0);
       IR : IN std_logic_vector(31 DOWNTO 0);
@@ -93,11 +95,11 @@ BEGIN
 data <= IR(15 DOWNTO 0);
 rt <= IR(20 DOWNTO 16);
 -- Port map of the components
-registers1 : REGISTERS port map(clock,rs,rt,rd,wb_mux,reg_en,reset,s_rs_data,s_rt_data);
+registers1 : REGISTERS port map(clk,rs,rt,rd,wb_mux,reg_en,reset,s_rs_data,s_rt_data);
 controller1 : CONTROLLER port map(IR,ALUCtr,SEL1,SEL2,extCtrl,WriteToReg,WriteToMem,BranchCtrl,IRTypeID_out);
 extimm1 : ExtImm port map(data,extCtrl,s_extendData);
 branchzero1 : BranchZero port map(s_rs_data,s_rt_data,BranchCtrl,s_btaken);
-bdest1 : branch_destination port map(BranchCtrl,s_extendData,pc_in,IR,s_bdestination);
+bdest1 : branch_destination port map(clk,BranchCtrl,s_extendData,pc_in,IR,s_bdestination);
 
 -- Propagating signals through the pipeline
 IR_out <= IR;
@@ -105,9 +107,18 @@ pc_out <= pc_in;
 rs_data <= s_rs_data;
 rt_data <= s_rt_data;
 extendData <= s_extendData;
-flush_request <= '0' WHEN(prediction = s_btaken) ELSE '1';
 bdestination <= pc_in WHEN(prediction = '1' and s_btaken = '0') else s_bdestination;
-
+PROCESS(clk,s_btaken)
+BEGIN
+	IF(rising_edge(s_btaken) AND clk = '1') then
+		IF(prediction = s_btaken) THEN
+			s_flush_request <= '0';
+		ELSE
+			s_flush_request <= '1';
+		END IF;
+	END IF;
+END PROCESS;
+flush_request <= s_flush_request;
 PROCESS(IR,readRegister,register_address,memwb_ir)
 BEGIN
   IF(readRegister = '1') THEN
